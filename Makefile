@@ -1,7 +1,8 @@
 CXX         = clang++
-CXXFLAGS    = -std=c++17 -I/opt/homebrew/include -I./lib/include -Wall -Wextra -pedantic
-# CXXFLAGS    = -std=c++17 -I/opt/homebrew/include -I./lib/include 
+CXXFLAGS    = -std=c++17 -I/opt/homebrew/include -I./lib/include
 LDFLAGS     = -L/opt/homebrew/lib -lsfml-graphics -lsfml-window -lsfml-system
+WARN        = -Wall -Wextra -pedantic
+# WARN        = -Wall -Wextra -Wcast-align -Wno-sign-compare -Wno-write-strings -Wno-parentheses -Wfloat-equal -pedantic
 
 # Lib
 LIB         = ./lib
@@ -20,16 +21,16 @@ TARGET      = CoreDumpers
 all: $(TARGET)
 
 $(TARGET): $(MAINOBJ) $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(WARN) $^ -o $@ $(LDFLAGS)
 
 # Compilar archivos fuente de lib
 $(LIB)/obj/%.o : $(LIB)/src/%.cpp
 	@mkdir -p $(LIB)/obj
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(WARN) -c $< -o $@
 
 # Compilar main.cpp
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(WARN) -c $< -o $@
 
 # --- Limpieza ---
 clean:
