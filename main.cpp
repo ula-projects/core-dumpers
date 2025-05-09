@@ -3,8 +3,9 @@
 
 int main()
 {
+    srand(static_cast<unsigned>(time(nullptr)));
     // SFML Window
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode({1024, 1024}), "Core Dumpers!");
     // Game
     Game game;
 
@@ -19,7 +20,7 @@ int main()
         window.clear();
 
         // Game Update
-        game.update();
+        game.draw(window);
 
         window.display();
     }

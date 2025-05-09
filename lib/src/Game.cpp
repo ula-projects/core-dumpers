@@ -1,11 +1,10 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
 #include <Game.hpp>
+#include <iostream>
 
-Game::Game() noexcept
-{
-}
+Game::Game() noexcept {}
 
-void Game::update()
+void Game::draw(sf::RenderWindow &window) const
 {
+    std::cout << "game draw" << "\r" << std::flush;
+    qt.draw(window);
 }
