@@ -3,7 +3,6 @@
 
 int main()
 {
-    srand(static_cast<unsigned>(time(nullptr)));
     // SFML Window
     sf::RenderWindow window(sf::VideoMode({1024, 1024}), "Core Dumpers!");
     // Game
