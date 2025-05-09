@@ -1,8 +1,11 @@
 # Core Dumpers (video game)
----
+
 Universidad de los Andes 
-Programacion 3
-Prof. Alejandro Mujica
+
+Programacion 3 
+
+Prof. Alejandro Mujica 
+
 Students:
 - Nerio Balza
 - Diego Osorio
