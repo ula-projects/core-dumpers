@@ -1,10 +1,10 @@
-<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuNRokZwhpgys22xDKwgoofhf_5ci9r8hInA&s" alt="ULA Logo" height="90" style="margin-bottom:27px; margin-right:30px"/><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNK85pzZHRUtPJ5k9ROoyttFbZw-EwIE1Qtg&s" alt="FI Logo" width="120" height="144"/>
+<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXElDjQaaj2Y2EYZLl7dD6p46m7cTohT-xMw&s" height="75"/>
 
 
 # Core Dumpers
 
-<b> Programacion 3
-Prof. Alejandro Mujica 
+<b> Programacion 3 <br/>
+Prof. Alejandro Mujica <br/>
 Students: 
 </b>
 - Nerio Balza
