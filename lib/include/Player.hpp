@@ -1,9 +1,14 @@
+#include <SFML/Graphics.hpp>
+
 class Player
 {
 private:
-    /* data */
+    sf::Texture texture;
+    sf::Sprite sprite;
+
 public:
     Player();
     ~Player();
+    void draw(sf::RenderWindow &window) const;
     void update();
 };

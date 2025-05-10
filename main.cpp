@@ -4,9 +4,11 @@
 int main()
 {
     // SFML Window
-    sf::RenderWindow window(sf::VideoMode({1024, 1024}), "Core Dumpers!");
+    sf::RenderWindow window(sf::VideoMode({640, 640}), "Core Dumpers!");
     // Game
     Game game;
+    // Clock
+    sf::Clock clock;
 
     while (window.isOpen())
     {
@@ -15,12 +17,14 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
+        // Delta Time
+        float dt = clock.reset().asSeconds();
 
         window.clear();
-
         // Game Update
+        game.update(dt);
+        // Game Draw updates
         game.draw(window);
-
         window.display();
     }
 }

@@ -1,10 +1,13 @@
 #include <Game.hpp>
-#include <iostream>
 
-Game::Game() noexcept {}
+Game::Game() {}
 
 void Game::draw(sf::RenderWindow &window) const
 {
-    std::cout << "game draw" << "\r" << std::flush;
-    qt.draw(window);
+    player.draw(window);
+}
+
+void Game::update(float &delta_time)
+{
+    player.update();
 }

@@ -9,8 +9,10 @@ class Game
 {
 private:
     QuadTree qt;
+    Player player;
 
 public:
-    Game() noexcept;
+    Game();
     void draw(sf::RenderWindow &window) const;
+    void update(float &delta_time);
 };
