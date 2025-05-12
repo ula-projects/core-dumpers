@@ -10,5 +10,6 @@ public:
     Player();
     ~Player();
     void draw(sf::RenderWindow &window) const;
-    void update();
+    void update(float delta_time);
+    sf::Vector2f getPosition();
 };
