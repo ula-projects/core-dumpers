@@ -5,6 +5,7 @@ class Player
 private:
     sf::Texture texture;
     sf::Sprite sprite;
+    float SPEED = 50.0f;
 
 public:
     Player();

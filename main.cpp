@@ -7,14 +7,13 @@ int main()
     // SFML Window
     sf::RenderWindow window(sf::VideoMode({640, 640}), "Core Dumpers!");
     window.setFramerateLimit(60);
-    // window.setVerticalSyncEnabled(true);
 
     // Game
     Game game;
 
     // Clock
     sf::Clock clock;
-
+    float dt = 0.0f;
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -23,22 +22,12 @@ int main()
                 window.close();
         }
         // Delta Time
-        float dt = clock.reset().asSeconds();
+        dt = clock.restart().asSeconds();
 
-        // if (dt < 0.0001f)
-        //     continue;
-
-        // Delta Time
-        // if (dt < 0.0333f)
-        //     dt = 0.0333f;
-
-        std::cout << std::fixed << std::setprecision(7);
-        // std::cout << dt << "\r" << std::flush;
         // Game Update
         game.update(dt);
 
         window.clear();
-
         // Game Draw updates
         game.draw(window);
         window.display();

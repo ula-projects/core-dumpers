@@ -71,7 +71,7 @@ QuadTreeNode::~QuadTreeNode()
 void QuadTreeNode::subdivide(int _depth)
 {
     depth = _depth;
-    if (_depth >= 5)
+    if (_depth >= 7)
     {
         is_leaf = true;
         if (region.isRegionOutsideCircle(256.0f))
