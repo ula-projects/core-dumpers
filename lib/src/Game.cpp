@@ -4,7 +4,7 @@ Game::Game()
 {
 }
 
-void Game::draw(sf::RenderWindow &window) const
+void Game::draw(sf::RenderWindow &window)
 {
     window.setView(camera.getCamera());
     player.draw(window);

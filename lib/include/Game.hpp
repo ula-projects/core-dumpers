@@ -15,6 +15,6 @@ private:
 
 public:
     Game();
-    void draw(sf::RenderWindow &window) const;
+    void draw(sf::RenderWindow &window);
     void update(float &delta_time);
 };
