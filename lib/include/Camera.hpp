@@ -9,6 +9,7 @@ private:
 
 public:
     Camera();
+    Camera(sf::Vector2f center);
     ~Camera();
     void setCenter(sf::Vector2f center, float delta_time);
     sf::Vector2f getCenter();

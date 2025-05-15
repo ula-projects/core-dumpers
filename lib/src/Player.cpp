@@ -4,13 +4,14 @@ Player::Player() : sprite(texture)
 {
     if (!texture.loadFromFile("./assets/textures/slime.png"))
     {
-        // Error - manejalo
+        // Error - considerar excepciones
     }
     sprite.setTexture(texture);
     sprite.setTextureRect({{0, 0}, {14, 15}});
     sprite.setOrigin({7, 7.5});
     sprite.setScale({4, 4});
-    sprite.setPosition({320, 320});
+    sprite.setPosition({0, -320});
+    grounded = false;
 }
 
 Player::~Player()
@@ -25,6 +26,7 @@ void Player::draw(sf::RenderWindow &window) const
 void Player::update(float delta_time)
 {
     sf::Vector2f movement({0.0f, 0.0f});
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
     {
         sprite.setScale({-4, 4});

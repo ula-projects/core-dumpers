@@ -7,6 +7,7 @@ private:
     sf::Texture texture;
     sf::Sprite sprite;
     float SPEED = 50.0f;
+    bool grounded;
 
 public:
     Player();
