@@ -8,7 +8,7 @@ Camera::Camera()
 
 Camera::Camera(sf::Vector2f center) : Camera()
 {
-    // camera.zoom(0.25f);
+    camera.zoom(0.5f);
     camera.setCenter(center);
 }
 
@@ -19,7 +19,6 @@ Camera::~Camera()
 void Camera::setCenter(sf::Vector2f center, float delta_time)
 {
     // center es vector de posicion;
-
     sf::Vector2f camera_center = camera.getCenter();
     sf::Vector2f offset = center - camera_center;
     float safe_zone_side = 200.0f;
@@ -78,50 +77,6 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
             camera.move(movement * 5.0f * delta_time);
         }
     }
-
-    // if (std::abs(offset.x) > 1 || std::abs(offset.y) > 1)
-    // {
-    //     sf::Vector2f movement({0.0f, 0.0f});
-
-    //     if (offset.x < -1)
-    //     {
-    //         movement.x = -1;
-    //     }
-    //     if (offset.x > 1)
-    //     {
-    //         movement.x = 1;
-    //     }
-
-    //     if (offset.y < -1)
-    //     {
-    //         movement.y = -1;
-    //     }
-    //     if (offset.y > 1)
-    //     {
-    //         movement.y = 1;
-    //     }
-
-    //     // Ajustamos la magnitud del vector
-    //     if (movement.x != 0.0f || movement.y != 0.0f)
-    //     {
-    //         float magnitude = std::sqrt(std::pow(movement.x, 2) + std::pow(movement.y, 2));
-    //         movement /= magnitude;
-    //     }
-
-    //     // Aumentamos la velocidad si se esta mas lejos del centro
-    //     if (std::abs(offset.x) > safe_zone_side || std::abs(offset.y) > safe_zone_side)
-    //     {
-    //         camera.move(movement * 50.0f * delta_time);
-    //     }
-    //     else if (std::abs(offset.x) > safe_zone_side / 10 || std::abs(offset.y) > safe_zone_side / 10)
-    //     {
-    //         camera.move(movement * 25.0f * delta_time);
-    //     }
-    //     else
-    //     {
-    //         camera.move(movement * 5.0f * delta_time);
-    //     }
-    // }
 }
 
 void Camera::setRotation(float degrees)

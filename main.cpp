@@ -16,6 +16,11 @@ int main()
     background.setOrigin({246.5f, 246.5f});
     background.setScale({2, 2});
     background.setPosition({0, 0});
+
+    sf::CircleShape origin(42.5);
+    origin.setOrigin({42.5, 42.5});
+    origin.setPosition({0, 0});
+    origin.setFillColor(sf::Color::Red);
     // Game
     Game game;
 
@@ -39,6 +44,7 @@ int main()
         // Game Draw updates
         window.draw(background);
         game.draw(window);
+        window.draw(origin);
         window.display();
     }
 }
