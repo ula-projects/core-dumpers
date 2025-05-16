@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <Coordinates.hpp>
-// #include <numbers>
 
 class Player
 {

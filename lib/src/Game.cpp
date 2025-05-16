@@ -6,6 +6,7 @@ Game::Game() : camera(player.getPosition())
 
 void Game::draw(sf::RenderWindow &window)
 {
+    qt.draw(window);
     window.setView(camera.getCamera());
     player.draw(window);
 }

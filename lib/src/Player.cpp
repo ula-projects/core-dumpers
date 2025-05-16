@@ -53,8 +53,8 @@ void Player::update(float delta_time)
 
     if (!grounded)
     {
-        gravity_movement.x = (-0.5f) * std::cosf(coordinates.rad_angle);
-        gravity_movement.y = (0.5f) * std::sinf(coordinates.rad_angle);
+        gravity_movement.x = (-0.5f) * std::cos(coordinates.rad_angle);
+        gravity_movement.y = (0.5f) * std::sin(coordinates.rad_angle);
     }
     else
     {
@@ -82,14 +82,14 @@ void Player::update(float delta_time)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
     {
         sprite.setScale({-1, 1});
-        movement.x = std::cosf(coordinates.rad_angle + (90 * M_PI / 180));
-        movement.y = -std::sinf(coordinates.rad_angle + (90 * M_PI / 180));
+        movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
+        movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
     {
         sprite.setScale({1, 1});
-        movement.x = std::cosf(coordinates.rad_angle - (90 * M_PI / 180));
-        movement.y = -std::sinf(coordinates.rad_angle - (90 * M_PI / 180));
+        movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
+        movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
     }
 
     // if (movement.x != 0.0f || movement.y != 0.0f)
