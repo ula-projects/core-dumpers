@@ -19,6 +19,10 @@ private:
 
     int game_state;
 
+    sf::Texture ground_texture;
+    sf::Sprite ground;
+    shared_ptr<sf::Sprite> ground_ptr;
+
 public:
     Game();
     void draw(sf::RenderWindow &window);

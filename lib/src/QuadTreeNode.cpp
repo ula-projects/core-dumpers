@@ -46,28 +46,34 @@ void QuadTreeNode::subdivide(XY _world_center, int _depthness)
     south_east->subdivide(_world_center, _depthness + 1);
 }
 
-void QuadTreeNode::draw(sf::RenderWindow &window) const
+void QuadTreeNode::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const
 {
     if (is_leaf)
     {
-        sf::RectangleShape square;
-        square.setSize({boundary.half_dimension * 2, boundary.half_dimension * 2});
-        square.setOrigin({boundary.half_dimension, boundary.half_dimension});
-        square.setPosition({boundary.center.x, boundary.center.y});
-        square.setFillColor(sf::Color::Blue);
-        if (is_empty)
+        // sf::RectangleShape square;
+        // square.setSize({boundary.half_dimension * 2, boundary.half_dimension * 2});
+        // square.setOrigin({boundary.half_dimension, boundary.half_dimension});
+        // square.setPosition({boundary.center.x, boundary.center.y});
+        // square.setFillColor(sf::Color::Blue);
+        // if (is_empty)
+        // {
+        //     square.setFillColor(sf::Color::White);
+        // }
+        // square.setOutlineColor(sf::Color::Black);
+        // square.setOutlineThickness(-0.5f);
+        // window.draw(square);
+        ground->setPosition({boundary.center.x, boundary.center.y});
+        if (!is_empty)
         {
-            square.setFillColor(sf::Color::White);
+
+            window.draw(*ground);
         }
-        square.setOutlineColor(sf::Color::Black);
-        square.setOutlineThickness(-0.5f);
-        window.draw(square);
     }
     else
     {
-        north_west->draw(window);
-        north_east->draw(window);
-        south_west->draw(window);
-        south_east->draw(window);
+        north_west->draw(window, ground);
+        north_east->draw(window, ground);
+        south_west->draw(window, ground);
+        south_east->draw(window, ground);
     }
 }

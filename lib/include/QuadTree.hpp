@@ -17,7 +17,7 @@ public:
     QuadTree();
     QuadTree(AABB _boundary);
     ~QuadTree();
-    void draw(sf::RenderWindow &window) const;
+    void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
     void setBoundary(AABB _boundary);
     void generateWorld();
 };

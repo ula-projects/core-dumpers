@@ -14,9 +14,9 @@ QuadTree::QuadTree(AABB _boundary)
 
 QuadTree::~QuadTree() {}
 
-void QuadTree::draw(sf::RenderWindow &window) const
+void QuadTree::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const
 {
-    root->draw(window);
+    root->draw(window, ground);
 };
 
 void QuadTree::setBoundary(AABB _boundary)

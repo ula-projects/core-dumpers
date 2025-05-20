@@ -28,5 +28,5 @@ public:
     ~QuadTreeNode();
 
     void subdivide(XY _world_center, int _depthness);
-    void draw(sf::RenderWindow &window) const;
+    void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
 };

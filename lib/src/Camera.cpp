@@ -8,7 +8,7 @@ Camera::Camera()
 
 Camera::Camera(sf::Vector2f center) : Camera()
 {
-    // camera.zoom(0.5f);
+    camera.zoom(0.5f);
     // camera.zoom(1.25f);
     camera.setCenter(center);
 }
