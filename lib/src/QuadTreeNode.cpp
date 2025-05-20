@@ -1,100 +1,49 @@
 #include <QuadTreeNode.hpp>
-
-/*
-    Region
-*/
-Region::Region()
-{
-    pos_x = pos_y = size = 0.0f;
-}
-
-Region::Region(float _x, float _y, float _size)
-{
-    pos_x = _x;
-    pos_y = _y;
-    size = _size;
-}
-
-bool Region::isRegionInsideCircle(const float &_radius)
-{
-    float half = size / 2;
-
-    float corners[4][2] = {
-        {pos_x - half, pos_y - half},  // Bottom-Left
-        {pos_x + half, pos_y - half},  // Bottom-Right
-        {pos_x - half, pos_x + half},  // Top-Left
-        {pos_x + half, pos_y + half}}; // Top-Right
-
-    for (auto &corner : corners)
-    {
-        float x = corner[0];
-        float y = corner[1];
-        if (std::sqrt(std::pow(x, 2) + std::pow(y, 2)) > _radius)
-            return false;
-    }
-
-    return true;
-}
-
-bool Region::isCenterInsideCircle(const float &_radius)
-{
-    return std::sqrt(std::pow(std::abs(pos_x), 2) + std::pow(std::abs(pos_x), 2)) <= _radius;
-}
-
-bool Region::isRegionOutsideCircle(const float &_radius)
-{
-    float half = size / 2;
-    float cx = std::abs(pos_x) - half;
-    float cy = std::abs(pos_y) - half;
-    return std::sqrt(std::pow(cx, 2) + std::pow(cy, 2)) > _radius;
-}
-
 /*
     Quad Tree Node
 */
 
-QuadTreeNode::QuadTreeNode(const Region &_region)
+QuadTreeNode::QuadTreeNode(const AABB &_boundary)
 {
-    region = _region;
+    boundary = _boundary;
     is_leaf = is_empty = false;
 
-    for (auto sub_reg : sub_regions)
-    {
-        sub_reg = nullptr;
-    }
+    north_west = north_east = south_west = south_east = nullptr;
 }
 
 QuadTreeNode::~QuadTreeNode()
 {
 }
 
-void QuadTreeNode::subdivide(int _depth)
+void QuadTreeNode::subdivide(XY _world_center, int _depthness)
 {
-    depth = _depth;
-    if (_depth >= 7)
+    depthness = _depthness;
+
+    if (boundary.isRegionOutsideCircle(_world_center, 256.0f))
     {
         is_leaf = true;
-        if (region.isRegionOutsideCircle(256.0f))
-        {
-            is_empty = true;
-        }
+        is_empty = true;
         return;
     }
-    float half = region.size / 2;
-    float quarter = region.size / 4;
 
-    Region regions[4] = {
-        Region(region.pos_x - quarter, region.pos_y - quarter, half),
-        Region(region.pos_x + quarter, region.pos_y - quarter, half),
-        Region(region.pos_x - quarter, region.pos_y + quarter, half),
-        Region(region.pos_x + quarter, region.pos_y + quarter, half),
-    };
-
-    for (int i = 0; i < 4; ++i)
+    if (_depthness >= 7)
     {
-        sub_regions[i] = std::make_shared<QuadTreeNode>(regions[i]);
-        sub_regions[i]->subdivide(_depth + 1);
+        is_leaf = true;
+        return;
     }
+
+    float half = boundary.half_dimension / 2;
+    float quarter = boundary.half_dimension / 2;
+
+    north_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y - quarter), half));
+    north_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y - quarter), half));
+    south_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y + quarter), half));
+    south_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y + quarter), half));
+
+    north_west->subdivide(_world_center, _depthness + 1);
+    north_east->subdivide(_world_center, _depthness + 1);
+    south_west->subdivide(_world_center, _depthness + 1);
+    south_east->subdivide(_world_center, _depthness + 1);
 }
 
 void QuadTreeNode::draw(sf::RenderWindow &window) const
@@ -102,9 +51,9 @@ void QuadTreeNode::draw(sf::RenderWindow &window) const
     if (is_leaf)
     {
         sf::RectangleShape square;
-        square.setSize({region.size, region.size});
-        square.setOrigin({region.size / 2, region.size / 2});
-        square.setPosition({region.pos_x + 1024 / 2, region.pos_y + 1024 / 2});
+        square.setSize({boundary.half_dimension * 2, boundary.half_dimension * 2});
+        square.setOrigin({boundary.half_dimension, boundary.half_dimension});
+        square.setPosition({boundary.center.x, boundary.center.y});
         square.setFillColor(sf::Color::Blue);
         if (is_empty)
         {
@@ -116,9 +65,9 @@ void QuadTreeNode::draw(sf::RenderWindow &window) const
     }
     else
     {
-        for (auto sub_reg : sub_regions)
-        {
-            sub_reg->draw(window);
-        }
+        north_west->draw(window);
+        north_east->draw(window);
+        south_west->draw(window);
+        south_east->draw(window);
     }
-};
+}

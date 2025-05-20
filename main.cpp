@@ -5,28 +5,21 @@
 int main()
 {
     // SFML Window
-    sf::RenderWindow window(sf::VideoMode({640, 640}), "Core Dumpers!");
+    sf::RenderWindow window(sf::VideoMode({800, 800}), "Core Dumpers!");
     window.setFramerateLimit(60);
-    sf::Texture texture;
-    if (!texture.loadFromFile("./assets/textures/space1.png"))
-    {
-    }
-    sf::Sprite background(texture);
-    background.setTextureRect({{0, 0}, {493, 493}});
-    background.setOrigin({246.5f, 246.5f});
-    background.setScale({2, 2});
-    background.setPosition({0, 0});
 
-    sf::CircleShape origin(42.5);
-    origin.setOrigin({42.5, 42.5});
-    origin.setPosition({0, 0});
-    origin.setFillColor(sf::Color::Red);
     // Game
     Game game;
 
     // Clock
     sf::Clock clock;
-    float dt = 0.0f;
+    float delta_time = 0.0f;
+
+    sf::CircleShape circle(42.5);
+    circle.setOrigin({42.5, 42.5});
+    circle.setFillColor(sf::Color::Red);
+    circle.setPosition({512, 512});
+
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -34,17 +27,13 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
-        // Delta Time
-        dt = clock.restart().asSeconds();
+        // Update
+        delta_time = clock.restart().asSeconds();
+        game.update(delta_time, window);
 
-        // Game Update
-        game.update(dt);
-
+        // Update Graphics
         window.clear();
-        // Game Draw updates
-        window.draw(background);
         game.draw(window);
-        window.draw(origin);
         window.display();
     }
 }

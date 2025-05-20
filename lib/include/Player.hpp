@@ -14,6 +14,7 @@ private:
     bool jumping;
     float jump_timer;
     bool grounded;
+    bool free_movement;
 
 public:
     Player();

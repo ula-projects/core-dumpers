@@ -2,13 +2,14 @@
 
 Camera::Camera()
 {
-    camera.setSize({640, 640});
+    camera.setSize({800, 800});
     is_centered = true;
 }
 
 Camera::Camera(sf::Vector2f center) : Camera()
 {
-    camera.zoom(0.5f);
+    // camera.zoom(0.5f);
+    // camera.zoom(1.25f);
     camera.setCenter(center);
 }
 
