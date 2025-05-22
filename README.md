@@ -29,7 +29,7 @@ Antes de compilar el proyecto, asegúrate de tener instaladas las siguientes dep
 
 ```bash
 sudo apt update
-sudo apt install build-essential make (escribir bibliotecas dependencias extra)
+sudo apt install build-essential make
 ```
 
 #### **Linux (Arch)**
@@ -81,5 +81,7 @@ Si tienes problemas con las dependencias, revisa los archivos `.so` o `.dll` fal
 ```bash
 ldd ./CoreDumpers
 ```
+
+Asegurate de instalar la version de SFML 3.0, Para más información sobre la instalación, visita [Visita SFML-Dev](https://www.sfml-dev.org/download/sfml/3.0.0/) y sigue el instructivo correspondiente a tu sistema operativo.
 
 Si necesitas ayuda, ¡abre un _issue_ en el repositorio!
