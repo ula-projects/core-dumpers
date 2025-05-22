@@ -25,5 +25,5 @@ public:
     ~Player();
     sf::Vector2f getPosition();
     void draw(sf::RenderWindow &window) const;
-    void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list);
+    void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window);
 };

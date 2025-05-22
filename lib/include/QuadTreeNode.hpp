@@ -33,4 +33,5 @@ public:
     AABB getBoundary();
     bool getIsEmpty();
     bool collisionAABB(AABB _boundary);
+    void undermine();
 };

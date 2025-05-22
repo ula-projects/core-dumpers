@@ -112,3 +112,8 @@ AABB QuadTreeNode::getBoundary()
 {
     return boundary;
 }
+
+void QuadTreeNode::undermine()
+{
+    is_empty = true;
+}

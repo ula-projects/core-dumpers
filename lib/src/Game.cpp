@@ -47,7 +47,6 @@ void Game::draw(sf::RenderWindow &window)
 
 void Game::update(float &delta_time, sf::RenderWindow &window)
 {
-    // sf::Mouse::getPosition(window);
     view_boundary.setBoundary(XY(camera.getCenter().x, camera.getCenter().y), view_boundary.half_width, view_boundary.half_height);
     collision_boundary.setBoundary(XY(player.getPosition().x, player.getPosition().y), collision_boundary.half_width, collision_boundary.half_height);
 
@@ -61,7 +60,7 @@ void Game::update(float &delta_time, sf::RenderWindow &window)
     {
         ground_list = qt.queryRange(view_boundary);
         collision_list = qt.queryRange(collision_boundary);
-        player.update(delta_time, collision_list);
+        player.update(delta_time, collision_list, window);
         camera.setCenter(player.getPosition(), delta_time);
     }
 }

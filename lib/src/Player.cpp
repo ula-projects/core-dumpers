@@ -43,7 +43,7 @@ void Player::draw(sf::RenderWindow &window) const
     window.draw(sprite);
 }
 
-void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list)
+void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window)
 {
     coordinates.updateCoordinates(sprite.getPosition());
     sprite_time += delta_time;
@@ -138,6 +138,20 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
                 grounded = false;
                 jumping = true;
                 jump_timer = 0;
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                for (auto ground : collision_list)
+                {
+                    sf::Vector2i click_pos = sf::Mouse::getPosition(window);
+                    sf::Vector2f absolute_pos = window.mapPixelToCoords(click_pos);
+
+                    if (ground->getBoundary().containsXY(XY(absolute_pos.x, absolute_pos.y)))
+                    {
+                        ground->undermine();
+                    }
+                }
             }
         }
 

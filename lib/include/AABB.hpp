@@ -43,5 +43,6 @@ struct AABB
     float minY() const;
     float maxY() const;
     bool intersectsAABB(AABB _boundary);
+    bool containsXY(XY _point);
     vector<XY> getAABBVertex();
 };

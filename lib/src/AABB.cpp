@@ -122,3 +122,8 @@ vector<XY> AABB::getAABBVertex()
 
     return vertex;
 }
+
+bool AABB::containsXY(XY _point)
+{
+    return _point.x >= minX() && _point.x <= maxX() && _point.y >= minY() && _point.y <= maxY();
+}
