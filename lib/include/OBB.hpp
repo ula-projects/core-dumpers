@@ -1,4 +1,5 @@
 #include <AABB.hpp>
+#include <algorithm>
 
 struct OBB : public AABB
 {
