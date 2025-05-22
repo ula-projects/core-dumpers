@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include <Coordinates.hpp>
+#include <QuadTreeNode.hpp>
 
 class Player
 {
@@ -11,8 +11,11 @@ private:
 
     float SPEED = 50.0f;
 
+    AABB player_boundary;
     bool jumping;
     float jump_timer;
+    float sprite_time;
+    int current_sprite;
     bool grounded;
     bool free_movement;
 
@@ -21,5 +24,5 @@ public:
     ~Player();
     sf::Vector2f getPosition();
     void draw(sf::RenderWindow &window) const;
-    void update(float delta_time);
+    void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list);
 };

@@ -1,5 +1,5 @@
 #include <Coordinates.hpp>
-#include <iostream>
+
 PolarCoordinates::PolarCoordinates()
 {
     angle = 0;
@@ -21,6 +21,5 @@ void PolarCoordinates::updateCoordinates(sf::Vector2f position)
     {
         angle += 360;
     }
-    std::cout << "angle: " << angle << " radius " << radius << "    \r" << std::flush;
     rad_angle = angle * M_PI / 180;
 };

@@ -20,8 +20,16 @@ private:
     int game_state;
 
     sf::Texture ground_texture;
+    sf::Texture background_texture;
     sf::Sprite ground;
+    sf::Sprite background;
     shared_ptr<sf::Sprite> ground_ptr;
+
+    AABB view_boundary;
+    vector<shared_ptr<QuadTreeNode>> ground_list;
+
+    AABB collision_boundary;
+    vector<shared_ptr<QuadTreeNode>> collision_list;
 
 public:
     Game();

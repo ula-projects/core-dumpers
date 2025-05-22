@@ -1,13 +1,13 @@
+#pragma once
 #include <SFML/Graphics.hpp>
-#include <array>
-#include <cmath>
-#include <memory>
 #include <AABB.hpp>
+#include <memory>
+#include <vector>
 
 template <typename T>
 using shared_ptr = std::shared_ptr<T>;
-template <typename T, std::size_t N>
-using array = std::array<T, N>;
+template <typename T>
+using vector = std::vector<T>;
 
 class QuadTreeNode
 {
@@ -29,4 +29,7 @@ public:
 
     void subdivide(XY _world_center, int _depthness);
     void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
+    vector<shared_ptr<QuadTreeNode>> queryRange(AABB &_boundary, shared_ptr<QuadTreeNode> &_this_ptr);
+
+    bool collisionAABB(AABB _boundary);
 };
