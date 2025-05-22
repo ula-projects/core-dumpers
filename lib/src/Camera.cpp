@@ -3,7 +3,6 @@
 Camera::Camera()
 {
     camera.setSize({320, 180});
-    // camera.setSize({1920, 1080});
     is_centered = true;
 }
 
@@ -79,10 +78,6 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
             camera.move(movement * 5.0f * delta_time);
         }
     }
-}
-
-void Camera::setRotation(float degrees)
-{
 }
 
 const sf::View &Camera::getCamera() const

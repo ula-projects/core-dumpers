@@ -14,7 +14,7 @@ Player::Player() : sprite(texture)
     jumping = false;
     sprite_time = 0;
     free_movement = false;
-    player_boundary.setBoundary(XY(getPosition().x, getPosition().y), 8, 8);
+    player_boundary.setBoundary(XY(getPosition().x, getPosition().y), 8, 8, coordinates.rad_angle);
 }
 
 Player::~Player()
@@ -28,6 +28,18 @@ sf::Vector2f Player::getPosition()
 
 void Player::draw(sf::RenderWindow &window) const
 {
+    sf::RectangleShape box_col({16, 16});
+    box_col.setOrigin({8, 8});
+    sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
+    box_col.setPosition(sprite.getPosition());
+    box_col.setRotation(rotation_angle);
+    box_col.setFillColor(sf::Color::Transparent);
+    box_col.setOutlineColor(sf::Color::Red);
+    box_col.setOutlineThickness(1);
+
+    rotation_angle = -sf::degrees(coordinates.angle - 90);
+    box_col.setRotation(rotation_angle);
+    window.draw(box_col);
     window.draw(sprite);
 }
 
@@ -43,15 +55,18 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
         sprite.setTextureRect({{current_sprite * 16, 0}, {16, 16}});
     }
 
-    player_boundary.setBoundary(XY(getPosition().x, getPosition().y), 8, 8);
+    player_boundary.setBoundary(XY(getPosition().x, getPosition().y), 8, 8, coordinates.rad_angle);
 
     grounded = false;
 
     for (auto ground : collision_list)
     {
-        if (ground->collisionAABB(player_boundary))
+        if (!ground->getIsEmpty())
         {
-            grounded = true;
+            if (player_boundary.intersectsSAT(ground->getBoundary()))
+            {
+                grounded = true;
+            }
         }
     }
 

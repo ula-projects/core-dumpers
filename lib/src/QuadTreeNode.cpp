@@ -49,9 +49,16 @@ void QuadTreeNode::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground
         ground->setPosition({boundary.center.x, boundary.center.y});
         if (!is_empty)
         {
-
             window.draw(*ground);
         }
+        sf::RectangleShape box_col({boundary.half_width * 2, boundary.half_height * 2});
+        // box_col.setSize({16, 16});
+        box_col.setOrigin({boundary.half_width, boundary.half_height});
+        box_col.setPosition(sf::Vector2f(boundary.center.x, boundary.center.y));
+        box_col.setFillColor(sf::Color::Transparent);
+        box_col.setOutlineColor(sf::Color::Red);
+        box_col.setOutlineThickness(1);
+        window.draw(box_col);
     }
     else
     {
@@ -94,4 +101,14 @@ vector<shared_ptr<QuadTreeNode>> QuadTreeNode::queryRange(AABB &_boundary, share
 bool QuadTreeNode::collisionAABB(AABB _boundary)
 {
     return boundary.intersectsAABB(_boundary);
+}
+
+bool QuadTreeNode::getIsEmpty()
+{
+    return is_empty;
+}
+
+AABB QuadTreeNode::getBoundary()
+{
+    return boundary;
 }

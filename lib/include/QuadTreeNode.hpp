@@ -30,6 +30,7 @@ public:
     void subdivide(XY _world_center, int _depthness);
     void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
     vector<shared_ptr<QuadTreeNode>> queryRange(AABB &_boundary, shared_ptr<QuadTreeNode> &_this_ptr);
-
+    AABB getBoundary();
+    bool getIsEmpty();
     bool collisionAABB(AABB _boundary);
 };

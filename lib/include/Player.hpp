@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <Coordinates.hpp>
 #include <QuadTreeNode.hpp>
+#include <OBB.hpp>
 
 class Player
 {
@@ -11,7 +12,7 @@ private:
 
     float SPEED = 50.0f;
 
-    AABB player_boundary;
+    OBB player_boundary;
     bool jumping;
     float jump_timer;
     float sprite_time;

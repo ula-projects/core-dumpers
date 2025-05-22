@@ -12,7 +12,7 @@ XY::XY(float _x, float _y)
     y = _y;
 }
 
-float XY::docProduct(XY _axis)
+float XY::dotProduct(XY _axis)
 {
     return x * _axis.x + y * _axis.y;
 }
@@ -27,6 +27,16 @@ XY XY::normalizedVector()
 {
     float h = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
     return h > 0 ? XY(x / h, y / h) : XY(0, 0);
+}
+
+XY XY::rotatedVector(XY _center, float _angle)
+{
+    float dx = x - _center.x;
+    float dy = y - _center.y;
+
+    return XY(
+        dx * std::cos(_angle) - dy * std::sin(_angle) + _center.x,
+        dx * std::sin(_angle) + dy * std::cos(_angle) + _center.y);
 }
 
 AABB::AABB()
@@ -101,7 +111,7 @@ bool AABB::intersectsAABB(AABB _boundary)
             maxY() > _boundary.minY());
 }
 
-vector<XY> AABB::getAABBvertex()
+vector<XY> AABB::getAABBVertex()
 {
     vector<XY> vertex;
 

@@ -13,11 +13,13 @@ struct XY
     XY();
     XY(float _x, float _y);
 
-    float docProduct(XY _axis);
+    float dotProduct(XY _axis);
 
     void setCoordinates(float _x, float _y);
 
     XY normalizedVector();
+
+    XY rotatedVector(XY _center, float _angle);
 };
 
 struct AABB
@@ -41,5 +43,5 @@ struct AABB
     float minY() const;
     float maxY() const;
     bool intersectsAABB(AABB _boundary);
-    vector<XY> getAABBvertex();
+    vector<XY> getAABBVertex();
 };
