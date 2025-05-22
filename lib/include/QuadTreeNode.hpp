@@ -1,47 +1,37 @@
+#pragma once
 #include <SFML/Graphics.hpp>
-#include <array>
-#include <cmath>
+#include <AABB.hpp>
 #include <memory>
+#include <vector>
 
-/*
-    alias
-*/
 template <typename T>
 using shared_ptr = std::shared_ptr<T>;
-template <typename T, std::size_t N>
-using array = std::array<T, N>;
+template <typename T>
+using vector = std::vector<T>;
 
-/*
-    Region
-*/
-struct Region
-{
-    float pos_x;
-    float pos_y;
-    float size;
-    Region();
-    Region(float _x, float _y, float _size);
-
-    bool isRegionInsideCircle(const float &_radius);
-    bool isCenterInsideCircle(const float &_radius);
-    bool isRegionOutsideCircle(const float &_radius);
-};
-
-/*
-    Quad Tree Node
-*/
 class QuadTreeNode
 {
 private:
-    Region region;
-    array<shared_ptr<QuadTreeNode>, 4> sub_regions;
-    int depth;
+    AABB boundary;
+
+    shared_ptr<QuadTreeNode> north_west;
+    shared_ptr<QuadTreeNode> north_east;
+    shared_ptr<QuadTreeNode> south_west;
+    shared_ptr<QuadTreeNode> south_east;
+
+    int depthness;
     bool is_leaf;
     bool is_empty;
 
 public:
-    QuadTreeNode(const Region &_region);
+    QuadTreeNode(const AABB &_boundary);
     ~QuadTreeNode();
-    void subdivide(int _depth);
-    void draw(sf::RenderWindow &window) const;
+
+    void subdivide(XY _world_center, int _depthness);
+    void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
+    vector<shared_ptr<QuadTreeNode>> queryRange(AABB &_boundary, shared_ptr<QuadTreeNode> &_this_ptr);
+    AABB getBoundary();
+    bool getIsEmpty();
+    bool collisionAABB(AABB _boundary);
+    void undermine();
 };
