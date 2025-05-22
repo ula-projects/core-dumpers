@@ -171,3 +171,18 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
         sprite.move(gravity_movement + (movement * SPEED * delta_time) + jump_vector);
     }
 }
+
+int Player::getHealthPoints() const
+{
+    return health_points;
+}
+void Player::takeDamage(int damage)
+{
+    health_points -= damage;
+
+    if (health_points <= 0)
+    {
+        // manejar muerte
+        health_points = 0;
+    }
+}

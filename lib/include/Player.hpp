@@ -9,7 +9,7 @@ private:
     PolarCoordinates coordinates;
     sf::Texture texture;
     sf::Sprite sprite;
-
+    int health_points;
     float SPEED = 50.0f;
 
     OBB player_boundary;
@@ -26,4 +26,6 @@ public:
     sf::Vector2f getPosition();
     void draw(sf::RenderWindow &window) const;
     void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window);
+    int getHealthPoints() const;
+    void takeDamage(int damage);
 };
