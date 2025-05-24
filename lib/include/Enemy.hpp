@@ -16,7 +16,7 @@ public:
     sf::Vector2f getPosition() const;
     void takeDamage(int damage);
     void setTarget(std::shared_ptr<Player> _player);
-    void update(float _delta_time);
+    void update(const float& _delta_time);
 
     void draw(sf::RenderWindow &window);
     

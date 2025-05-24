@@ -43,19 +43,23 @@ private:
 class SelectorNode : public BTNode
 {
 public:
+    SelectorNode();
     void addChild(std::shared_ptr<BTNode> child);
     NodeStatus execute() override;
 
 private:
     std::vector<std::shared_ptr<BTNode>> children;
+    size_t current_child_index; 
 };
 
 class SequenceNode : public BTNode
 {
 public:
+    SequenceNode();
     void addChild(std::shared_ptr<BTNode> child);
     NodeStatus execute() override;
 
 private:
     std::vector<std::shared_ptr<BTNode>> children;
+    size_t current_child_index;
 };

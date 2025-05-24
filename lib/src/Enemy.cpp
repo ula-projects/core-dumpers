@@ -8,7 +8,7 @@ void Enemy::takeDamage(int damage)
 
     if (health_points <= 0)
     {
-        // asignar drop al jugador
+        // asignar drop al player
         health_points = 0;
     }
 }
@@ -79,7 +79,7 @@ void Enemy::draw(sf::RenderWindow &window)
 // Implementaciones de funciones condicion
 bool Enemy::isPlayerNear()
 {
-    if(!checkTargetStatus())
+    if (!checkTargetStatus())
     {
         return false;
     }
@@ -87,6 +87,10 @@ bool Enemy::isPlayerNear()
     float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
     if (distance < vision_range)
     {
+        if (debug_options)
+        {
+            std::cout << "Player ha entrado en el area de vision" << std::endl;
+        }
         return true;
     }
     return false;
@@ -94,7 +98,7 @@ bool Enemy::isPlayerNear()
 
 bool Enemy::isPlayerInAttackRange()
 {
-    if(!checkTargetStatus())
+    if (!checkTargetStatus())
     {
         return false;
     }
@@ -102,6 +106,10 @@ bool Enemy::isPlayerInAttackRange()
     float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
     if (distance < attack_range)
     {
+        if (debug_options)
+        {
+            std::cout << "Player ha entrado en el area de ataque" << std::endl;
+        }
         return true;
     }
     return false;
@@ -109,8 +117,12 @@ bool Enemy::isPlayerInAttackRange()
 
 bool Enemy::isHealthLow()
 {
-    if (health_points < max_health / 4)
+    if (health_points < max_health / 2)
     {
+        if (debug_options)
+        {
+            std::cout << "Enemy tiene poca vida" << std::endl;
+        }
         return true;
     }
     return false;
@@ -178,16 +190,23 @@ std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
     return main_behavior;
 }
 
-void Enemy::update(float _delta_time)
+void Enemy::update(const float& _delta_time)
 {
     delta_time = _delta_time;
-    NodeStatus status = behavior_tree->execute();
 
-    if (status == NodeStatus::SUCCESS || status == NodeStatus::FAILURE)
+    if (!debug_options)
     {
-        behavior_tree = createEnemyBehaviorTree();
+        behavior_tree->execute();
     }
+    else
+    {
+        NodeStatus status = behavior_tree->execute();
 
+        // if (status == NodeStatus::RUNNING)
+        // {
+        //     std::cout << "Status Running" << std::endl;
+        // }
+    }
 }
 
 FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : Enemy(texture)
@@ -199,7 +218,7 @@ FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : En
     attack_range = 50;
     vision_range = 200;
     speed = 35.0f;
-    debug_options  = true;
+    debug_options  = false;
     delta_time = 0.0f;
     attack_cooldown = 1.0f;
     regen_cooldown = 1.0f;
@@ -212,7 +231,7 @@ FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : En
 
 NodeStatus FlyingEnemy::attackPlayer()
 {
-    if(!checkTargetStatus())
+    if (!checkTargetStatus())
     {
         return NodeStatus::FAILURE;
     }
@@ -221,17 +240,27 @@ NodeStatus FlyingEnemy::attackPlayer()
     if (attack_clock.getElapsedTime().asSeconds() >= attack_cooldown)
     {
         target->takeDamage(attack_points);
+        if (debug_options)
+        {
+            std::cout << "Enemy ha atacado a Player" << std::endl;
+        }
         attack_clock.restart();
 
         checkTargetStatus();
         return NodeStatus::SUCCESS;
     }
+
+    if (debug_options)
+    {
+        std::cout << "El ataque de Enemy se retraso debido al Cooldown" << std::endl;
+    }
+
     return NodeStatus::RUNNING;
 }
 
 NodeStatus FlyingEnemy::approachPlayer()
 {
-    if(!checkTargetStatus())
+    if (!checkTargetStatus())
     {
         return NodeStatus::FAILURE;
     }
@@ -243,10 +272,23 @@ NodeStatus FlyingEnemy::approachPlayer()
     sf::Vector2f direction = target_position - enemy_position;
     float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-    if (magnitude > attack_range - 25.0f)
+    if (magnitude > vision_range)
+    {
+        if (debug_options)
+        {
+            std::cout << "Approach interrumpido, Player a salido del area de vision" << std::endl;
+        }
+        return NodeStatus::FAILURE;
+    }
+
+    if (magnitude > attack_range - 10.0f)
     {
         direction /= magnitude;
         sprite.move(direction * speed * delta_time);
+        if (debug_options)
+        {
+            std::cout << "Enemy se esta acercando a Player" << std::endl;
+        }
         return NodeStatus::RUNNING;
     }
 
@@ -256,23 +298,50 @@ NodeStatus FlyingEnemy::approachPlayer()
 NodeStatus FlyingEnemy::rest()
 {
     checkTargetStatus();
+
+    if (isPlayerNear())
+    {
+        if (debug_options)
+        {
+            std::cout << "Rest interrumpido, ha entrado un Player en el area de vision" << std::endl;
+        }
+        return NodeStatus::FAILURE;
+    }
+
     if (health_clock.getElapsedTime().asSeconds() >= regen_cooldown)
     {
         if (health_points < max_health)
         {
             health_points += 1;
+            
+            if (debug_options)
+            {
+                std::cout << "Enemy ha regenerado vida, vida actual: " << getHealthPoints() << std::endl;
+            }
             health_clock.restart();
             return NodeStatus::RUNNING;
         }
         return NodeStatus::SUCCESS;
     }
-    return NodeStatus::FAILURE;
+    return NodeStatus::RUNNING;
 }
 
 NodeStatus FlyingEnemy::patrolArea()
 {
+    if (debug_options)
+    {
+        std::cout << "Enemy esta patrullando la zona" << std::endl;
+    }
+    if (isPlayerNear())
+    {
+        if (debug_options)
+        {
+            std::cout << "Patrol completado, ha entrado un Player en el area de vision" << std::endl;
+        }
+        return NodeStatus::SUCCESS;
+    }
     checkTargetStatus();
-    return NodeStatus::SUCCESS;
+    return NodeStatus::RUNNING;
 }
 
 void InteractionManager(std::vector<std::shared_ptr<Enemy>>& enemies, std::shared_ptr<Player> player)

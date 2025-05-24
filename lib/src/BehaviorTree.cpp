@@ -17,6 +17,8 @@ NodeStatus ActionNode::execute()
 }
 
 // Definiciones de SelectorNode
+SelectorNode::SelectorNode() : current_child_index(0){}
+
 void SelectorNode::addChild(std::shared_ptr<BTNode> child)
 {
     children.push_back(child);
@@ -24,23 +26,27 @@ void SelectorNode::addChild(std::shared_ptr<BTNode> child)
     
 NodeStatus SelectorNode::execute()
 {
-    for (auto& child : children)
+    for (size_t i = current_child_index; i < children.size(); ++i)
     {
-        NodeStatus status = child->execute();
+        NodeStatus status = children[i]->execute();
         if (status == NodeStatus::RUNNING)
         {
+            current_child_index = i;
             return NodeStatus::RUNNING;
         }
         if (status == NodeStatus::SUCCESS)
         {
+            current_child_index = 0;
             return NodeStatus::SUCCESS;
         }
     }
+    current_child_index = 0;
     return NodeStatus::FAILURE;
 }
 
-
 // Definiciones de SequenceNode
+SequenceNode::SequenceNode() : current_child_index(0){}
+
 void SequenceNode::addChild(std::shared_ptr<BTNode> child)
 {
     children.push_back(child);
@@ -48,17 +54,20 @@ void SequenceNode::addChild(std::shared_ptr<BTNode> child)
 
 NodeStatus SequenceNode::execute()
 {
-    for (auto& child : children)
+    for (size_t i = current_child_index; i < children.size(); ++i)
     {
-        NodeStatus status = child->execute();
+        NodeStatus status = children[i]->execute();
         if (status == NodeStatus::RUNNING)
         {
+            current_child_index = i;
             return NodeStatus::RUNNING;
         }
         if (status == NodeStatus::FAILURE)
         {
+            current_child_index = 0;
             return NodeStatus::FAILURE;
         }
     }
+    current_child_index = 0;
     return NodeStatus::SUCCESS;
 }
