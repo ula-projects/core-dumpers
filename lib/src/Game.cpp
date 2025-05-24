@@ -24,11 +24,10 @@ Game::Game() : camera(), ground(ground_texture)
     {
     }
 
-    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({200, 200}), enemy_texture)); //TODO DESACOPLAR LAD COORDENADAS
-    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({800, 800}), enemy_texture)); //Coordenadas arbitrarias
+    //Creacion de Enemigos
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({200, 200}), enemy_texture));
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({800, 800}), enemy_texture));
 
-    enemies[0]->takeDamage(90);
-    enemies[1]->takeDamage(90);
     game_state = 0;
 }
 

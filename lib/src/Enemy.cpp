@@ -89,7 +89,7 @@ bool Enemy::isPlayerNear()
     {
         if (debug_options)
         {
-            std::cout << "Player ha entrado en el area de vision" << std::endl;
+            std::cout << "Player ha entrado en el area de vision de Enemy" << std::endl;
         }
         return true;
     }
@@ -108,7 +108,7 @@ bool Enemy::isPlayerInAttackRange()
     {
         if (debug_options)
         {
-            std::cout << "Player ha entrado en el area de ataque" << std::endl;
+            std::cout << "Player ha entrado en el area de ataque de Enemy" << std::endl;
         }
         return true;
     }
@@ -202,10 +202,10 @@ void Enemy::update(const float& _delta_time)
     {
         NodeStatus status = behavior_tree->execute();
 
-        // if (status == NodeStatus::RUNNING)
-        // {
-        //     std::cout << "Status Running" << std::endl;
-        // }
+        if (status == NodeStatus::RUNNING)
+        {
+            std::cout << "Behavior Tree retorno el estado: RUNNING" << std::endl;
+        }
     }
 }
 
@@ -276,7 +276,7 @@ NodeStatus FlyingEnemy::approachPlayer()
     {
         if (debug_options)
         {
-            std::cout << "Approach interrumpido, Player a salido del area de vision" << std::endl;
+            std::cout << "Approach interrumpido, Player ha salido del area de vision" << std::endl;
         }
         return NodeStatus::FAILURE;
     }
@@ -303,7 +303,7 @@ NodeStatus FlyingEnemy::rest()
     {
         if (debug_options)
         {
-            std::cout << "Rest interrumpido, ha entrado un Player en el area de vision" << std::endl;
+            std::cout << "Rest interrumpido, Player ha en el area de vision" << std::endl;
         }
         return NodeStatus::FAILURE;
     }
@@ -336,7 +336,7 @@ NodeStatus FlyingEnemy::patrolArea()
     {
         if (debug_options)
         {
-            std::cout << "Patrol completado, ha entrado un Player en el area de vision" << std::endl;
+            std::cout << "Patrol completado, Player ha entrado en el area de vision" << std::endl;
         }
         return NodeStatus::SUCCESS;
     }
