@@ -1,8 +1,9 @@
 #include <Game.hpp>
 #include <iostream>
 
-Game::Game() : camera(player.getPosition()), ground(ground_texture)
+Game::Game() : camera(), ground(ground_texture)
 {
+    player = std::make_shared<Player>();
     world_center.setCoordinates(512, 512);
     world_boundary.setBoundary(world_center, 512);
 
@@ -19,6 +20,13 @@ Game::Game() : camera(player.getPosition()), ground(ground_texture)
 
     ground_ptr = std::make_shared<sf::Sprite>(ground);
 
+    if (!enemy_texture.loadFromFile("./assets/textures/enemy.png"))
+    {
+    }
+
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({200, 200}), enemy_texture)); //TODO DESACOPLAR LAD COORDENADAS
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({800, 800}), enemy_texture)); //Coordenadas arbitrarias
+
     game_state = 0;
 }
 
@@ -33,7 +41,11 @@ void Game::draw(sf::RenderWindow &window)
     {
         qt.draw(window, ground_ptr);
         window.setView(camera.getCamera());
-        player.draw(window);
+        player->draw(window);
+        for(auto& enemy : enemies)
+        {
+            enemy->draw(window);
+        }
     }
 }
 
@@ -49,7 +61,12 @@ void Game::update(float &delta_time, sf::RenderWindow &window)
     // Juego
     else if (game_state == 1)
     {
-        player.update(delta_time);
-        camera.setCenter(player.getPosition(), delta_time);
+        InteractionManager(enemies, player);
+        player->update(delta_time);
+        for (auto& enemy : enemies)
+        {
+            enemy->update(delta_time);
+        }
+        camera.setCenter(player->getPosition(), delta_time);
     }
 }

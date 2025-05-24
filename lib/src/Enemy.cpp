@@ -1,6 +1,6 @@
 #include "Enemy.hpp"
 
-Enemy::Enemy() : sprite(texture){}
+Enemy::Enemy(const sf::Texture& texture) : sprite(texture){}
 
 void Enemy::takeDamage(int damage)
 {
@@ -54,11 +54,23 @@ bool Enemy::checkTargetStatus()
 void Enemy::draw(sf::RenderWindow &window)
 {
     window.draw(sprite);
-    vision_area.setPosition(getPosition());
-    attack_area.setPosition(getPosition());
 
     if (debug_options)
     {
+        sf::CircleShape vision_area;
+        sf::CircleShape attack_area;
+        vision_area.setRadius(vision_range);
+        vision_area.setFillColor(sf::Color::Transparent);
+        vision_area.setOutlineColor(sf::Color::Yellow);
+        vision_area.setOutlineThickness(1.5f);
+        vision_area.setOrigin({vision_range, vision_range});
+        vision_area.setPosition(getPosition());
+        attack_area.setRadius(attack_range);
+        attack_area.setFillColor(sf::Color::Transparent);
+        attack_area.setOutlineColor(sf::Color::Magenta);
+        attack_area.setOutlineThickness(1.5f);
+        attack_area.setOrigin({attack_range, attack_range});
+        attack_area.setPosition(getPosition());
         window.draw(vision_area);
         window.draw(attack_area);
     }
@@ -178,54 +190,24 @@ void Enemy::update(float _delta_time)
 
 }
 
-FlyingEnemy::FlyingEnemy(sf::Vector2f position)
+FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : Enemy(texture)
 {
     health_points = 100;
     max_health = 100;
     attack_points = 10;
     drop = 25;
     attack_range = 50;
-    vision_range = 250;
-    speed = 50.0f;
-    debug_options  = false;
+    vision_range = 200;
+    speed = 35.0f;
+    debug_options  = true;
     delta_time = 0.0f;
     attack_cooldown = 1.0f;
     regen_cooldown = 1.0f;
 
     behavior_tree = createEnemyBehaviorTree();
 
-    if (!texture.loadFromFile("enemy.png"))
-    {
-        // Error cargando la textura
-    }
-    sprite.setTexture(texture);
     sprite.setOrigin({8, 8});
     sprite.setPosition(position);
-
-    //Debug Options
-    vision_area.setRadius(vision_range);
-    vision_area.setFillColor(sf::Color::Transparent);
-    vision_area.setOutlineColor(sf::Color::Yellow);
-    vision_area.setOutlineThickness(1.5f);
-
-    if (vision_area.getOrigin().x == 0.0f && vision_area.getOrigin().y == 0.0f)
-    {
-        vision_area.setOrigin({vision_area.getRadius(), vision_area.getRadius()});
-    }
-
-    vision_area.setPosition(getPosition());
-
-    attack_area.setRadius(attack_range);
-    attack_area.setFillColor(sf::Color::Transparent);
-    attack_area.setOutlineColor(sf::Color::Magenta);
-    attack_area.setOutlineThickness(1.5f);
-
-    if (attack_area.getOrigin().x == 0.0f && attack_area.getOrigin().y == 0.0f)
-    {
-        attack_area.setOrigin({attack_area.getRadius(), attack_area.getRadius()});
-    }
-
-    attack_area.setPosition(getPosition());
 }
 
 NodeStatus FlyingEnemy::attackPlayer()

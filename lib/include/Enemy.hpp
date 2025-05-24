@@ -9,7 +9,7 @@
 class Enemy
 {
 public:
-    Enemy();
+    Enemy(const sf::Texture& texture);
     virtual ~Enemy() = default;
     int getHealthPoints() const;
     int getVisionRange() const;
@@ -25,8 +25,8 @@ protected:
     int max_health;
     int attack_points;
     int drop;
-    int attack_range;
-    int vision_range;
+    float attack_range;
+    float vision_range;
     float speed;
     float delta_time;
     sf::Clock attack_clock;
@@ -34,10 +34,7 @@ protected:
     float attack_cooldown;
     float regen_cooldown;
     std::shared_ptr<Player> target;
-    sf::Texture texture;
     sf::Sprite sprite;
-    sf::CircleShape vision_area;
-    sf::CircleShape attack_area;
     bool debug_options;
     std::shared_ptr<BTNode> behavior_tree;
 
@@ -58,7 +55,7 @@ protected:
 class FlyingEnemy : public Enemy
 {
 public:
-    FlyingEnemy(sf::Vector2f position);
+    FlyingEnemy(sf::Vector2f position, const sf::Texture& texture);
     ~FlyingEnemy() override = default;
 private:
     NodeStatus attackPlayer() override;

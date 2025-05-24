@@ -15,6 +15,11 @@ Player::Player() : sprite(texture)
     grounded = false;
     jumping = false;
     free_movement = true;
+
+    health_points = 100;
+    max_health = 100;
+    attack_points = 20;
+    attack_range = 15;
 }
 
 Player::~Player()
@@ -24,6 +29,22 @@ Player::~Player()
 sf::Vector2f Player::getPosition()
 {
     return sprite.getPosition();
+}
+
+int Player::getHealthPoints() const
+{
+    return health_points;
+}
+
+void Player::takeDamage(int damage)
+{
+    health_points -= damage;
+
+    if (health_points <= 0)
+    {
+        // manejar muerte
+        health_points = 0;
+    }
 }
 
 void Player::draw(sf::RenderWindow &window) const

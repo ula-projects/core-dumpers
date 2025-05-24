@@ -6,12 +6,14 @@
 #include <Planet.hpp>
 #include <Camera.hpp>
 #include <Menu.hpp>
+#include <Enemy.hpp>
 
 class Game
 {
 private:
     QuadTree qt;
-    Player player;
+    std::shared_ptr<Player> player;
+    std::vector<std::shared_ptr<Enemy>> enemies;
     Camera camera;
     XY world_center;
     AABB world_boundary;
@@ -23,6 +25,8 @@ private:
     sf::Sprite ground;
     shared_ptr<sf::Sprite> ground_ptr;
 
+    sf::Texture enemy_texture;
+    
 public:
     Game();
     void draw(sf::RenderWindow &window);
