@@ -18,6 +18,8 @@ Camera::~Camera()
 void Camera::setCenter(sf::Vector2f center, float delta_time)
 {
     // center es vector de posicion;
+    // sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
+    // sprite.setRotation(rotation_angle);
     sf::Vector2f camera_center = camera.getCenter();
     sf::Vector2f offset = center - camera_center;
 

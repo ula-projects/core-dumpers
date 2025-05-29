@@ -1,11 +1,11 @@
 CXX         = clang++
 # MACOS
-# CXXFLAGS    = -std=c++17 -I/opt/homebrew/include -I./lib/include
-# LDFLAGS     = -L/opt/homebrew/lib -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS    = -std=c++17 -I/opt/homebrew/include -I./lib/include -I/usr/local/include
+LDFLAGS     = -L/opt/homebrew/lib -L/usr/local/lib -lsfml-graphics -lsfml-window -lsfml-system -lbox2d
 # END - MACOS
-# LINUX
-CXXFLAGS    = -std=c++17 -I/usr/local/include -I./lib/include
-LDFLAGS     = -L/usr/local/lib -lsfml-graphics -lsfml-window -lsfml-system
+# # LINUX
+# CXXFLAGS    = -std=c++17 -I/usr/local/include -I./lib/include
+# LDFLAGS     = -L/usr/local/lib -lsfml-graphics -lsfml-window -lsfml-system
 # END - LINUX
 WARN        = -Wall -Wextra -pedantic
 # WARN        = -Wall -Wextra -Wcast-align -Wno-sign-compare -Wno-write-strings -Wno-parentheses -Wfloat-equal -pedantic

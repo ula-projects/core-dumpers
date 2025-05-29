@@ -2,35 +2,43 @@
 
 QuadTree::QuadTree()
 {
-    root = nullptr;
 }
 
-QuadTree::QuadTree(AABB _boundary)
+QuadTree::~QuadTree()
 {
-    root = std::make_shared<QuadTreeNode>(_boundary);
-    world_center = _boundary.center;
-    generateWorld();
 }
 
-QuadTree::~QuadTree() {}
+// QuadTree::QuadTree()
+// {
+//     root = nullptr;
+// }
 
-void QuadTree::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const
-{
-    root->draw(window, ground);
-};
+// QuadTree::QuadTree(AABB _boundary)
+// {
+//     root = std::make_shared<QuadTreeNode>(_boundary);
+//     world_center = _boundary.center;
+//     generateWorld();
+// }
 
-void QuadTree::setBoundary(AABB _boundary)
-{
-    root = std::make_shared<QuadTreeNode>(_boundary);
-    world_center = _boundary.center;
-}
+// QuadTree::~QuadTree() {}
 
-void QuadTree::generateWorld()
-{
-    root->subdivide(world_center, 0);
-}
+// void QuadTree::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const
+// {
+//     root->draw(window, ground);
+// };
 
-vector<shared_ptr<QuadTreeNode>> QuadTree::queryRange(AABB &_boundary)
-{
-    return root->queryRange(_boundary, root);
-}
+// void QuadTree::setBoundary(AABB _boundary)
+// {
+//     root = std::make_shared<QuadTreeNode>(_boundary);
+//     world_center = _boundary.center;
+// }
+
+// void QuadTree::generateWorld()
+// {
+//     root->subdivide(world_center, 0);
+// }
+
+// vector<shared_ptr<QuadTreeNode>> QuadTree::queryRange(AABB &_boundary)
+// {
+//     return root->queryRange(_boundary, root);
+// }
