@@ -1,7 +1,4 @@
 #include <QuadTreeNode.hpp>
-/*
-    Quad Tree Node
-*/
 
 QuadTreeNode::QuadTreeNode(const AABB &_boundary)
 {
@@ -26,19 +23,18 @@ void QuadTreeNode::subdivide(XY _world_center, int _depthness)
         return;
     }
 
-    if (_depthness >= 7)
+    if (_depthness >= 6)
     {
         is_leaf = true;
         return;
     }
 
-    float half = boundary.half_dimension / 2;
-    float quarter = boundary.half_dimension / 2;
+    float quarter = boundary.half_width / 2;
 
-    north_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y - quarter), half));
-    north_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y - quarter), half));
-    south_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y + quarter), half));
-    south_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y + quarter), half));
+    north_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y - quarter), quarter, quarter));
+    north_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y - quarter), quarter, quarter));
+    south_west = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x - quarter, boundary.center.y + quarter), quarter, quarter));
+    south_east = std::make_shared<QuadTreeNode>(AABB(XY(boundary.center.x + quarter, boundary.center.y + quarter), quarter, quarter));
 
     north_west->subdivide(_world_center, _depthness + 1);
     north_east->subdivide(_world_center, _depthness + 1);
@@ -50,24 +46,19 @@ void QuadTreeNode::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground
 {
     if (is_leaf)
     {
-        // sf::RectangleShape square;
-        // square.setSize({boundary.half_dimension * 2, boundary.half_dimension * 2});
-        // square.setOrigin({boundary.half_dimension, boundary.half_dimension});
-        // square.setPosition({boundary.center.x, boundary.center.y});
-        // square.setFillColor(sf::Color::Blue);
-        // if (is_empty)
-        // {
-        //     square.setFillColor(sf::Color::White);
-        // }
-        // square.setOutlineColor(sf::Color::Black);
-        // square.setOutlineThickness(-0.5f);
-        // window.draw(square);
         ground->setPosition({boundary.center.x, boundary.center.y});
         if (!is_empty)
         {
-
             window.draw(*ground);
         }
+        sf::RectangleShape box_col({boundary.half_width * 2, boundary.half_height * 2});
+        // box_col.setSize({16, 16});
+        box_col.setOrigin({boundary.half_width, boundary.half_height});
+        box_col.setPosition(sf::Vector2f(boundary.center.x, boundary.center.y));
+        box_col.setFillColor(sf::Color::Transparent);
+        box_col.setOutlineColor(sf::Color::Red);
+        box_col.setOutlineThickness(1);
+        window.draw(box_col);
     }
     else
     {
@@ -76,4 +67,53 @@ void QuadTreeNode::draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground
         south_west->draw(window, ground);
         south_east->draw(window, ground);
     }
+}
+
+vector<shared_ptr<QuadTreeNode>> QuadTreeNode::queryRange(AABB &_boundary, shared_ptr<QuadTreeNode> &_this_ptr)
+{
+    vector<shared_ptr<QuadTreeNode>> list;
+
+    if (!boundary.intersectsAABB(_boundary))
+    {
+        return list;
+    }
+
+    if (!is_leaf)
+    {
+        vector<shared_ptr<QuadTreeNode>> nw_list = north_west->queryRange(_boundary, north_west);
+        vector<shared_ptr<QuadTreeNode>> ne_list = north_east->queryRange(_boundary, north_east);
+        vector<shared_ptr<QuadTreeNode>> sw_list = south_west->queryRange(_boundary, south_west);
+        vector<shared_ptr<QuadTreeNode>> se_list = south_east->queryRange(_boundary, south_east);
+        list.insert(list.end(), nw_list.begin(), nw_list.end());
+        list.insert(list.end(), ne_list.begin(), ne_list.end());
+        list.insert(list.end(), sw_list.begin(), sw_list.end());
+        list.insert(list.end(), se_list.begin(), se_list.end());
+    }
+
+    if (is_leaf && depthness >= 6)
+    {
+        list.push_back(_this_ptr);
+    }
+
+    return list;
+}
+
+bool QuadTreeNode::collisionAABB(AABB _boundary)
+{
+    return boundary.intersectsAABB(_boundary);
+}
+
+bool QuadTreeNode::getIsEmpty()
+{
+    return is_empty;
+}
+
+AABB QuadTreeNode::getBoundary()
+{
+    return boundary;
+}
+
+void QuadTreeNode::undermine()
+{
+    is_empty = true;
 }

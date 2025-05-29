@@ -2,14 +2,12 @@
 
 Camera::Camera()
 {
-    camera.setSize({800, 800});
+    camera.setSize({320, 180});
     is_centered = true;
 }
 
 Camera::Camera(sf::Vector2f center) : Camera()
 {
-    camera.zoom(0.5f);
-    // camera.zoom(1.25f);
     camera.setCenter(center);
 }
 
@@ -22,16 +20,18 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
     // center es vector de posicion;
     sf::Vector2f camera_center = camera.getCenter();
     sf::Vector2f offset = center - camera_center;
-    float safe_zone_side = 200.0f;
-    float safe_zone_half = safe_zone_side / 2;
-    sf::FloatRect safe_zone({camera_center.x - safe_zone_half, camera_center.y - safe_zone_half}, {safe_zone_side, safe_zone_side});
+
+    float safe_zone_half_x = 40.0f;
+    float safe_zone_half_y = 25.0f;
+
+    sf::FloatRect safe_zone({camera_center.x - safe_zone_half_x, camera_center.y - safe_zone_half_y}, {safe_zone_half_x * 2, safe_zone_half_y * 2});
 
     if (!is_centered && std::abs(offset.x) <= 1 && std::abs(offset.y) <= 1)
     {
         is_centered = true;
     }
 
-    if (std::abs(offset.x) > safe_zone_half || std::abs(offset.y) > safe_zone_half)
+    if (std::abs(offset.x) > safe_zone_half_x || std::abs(offset.y) > safe_zone_half_y)
     {
         is_centered = false;
     }
@@ -65,11 +65,11 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
         }
 
         // Aumentamos la velocidad si se esta mas lejos del centro
-        if (std::abs(offset.x) > safe_zone_side || std::abs(offset.y) > safe_zone_side)
+        if (std::abs(offset.x) > safe_zone_half_x * 2 || std::abs(offset.y) > safe_zone_half_y * 2)
         {
             camera.move(movement * 50.0f * delta_time);
         }
-        else if (std::abs(offset.x) > safe_zone_side / 10 || std::abs(offset.y) > safe_zone_side / 10)
+        else if (std::abs(offset.x) > safe_zone_half_x / 5 || std::abs(offset.y) > safe_zone_half_y / 5)
         {
             camera.move(movement * 25.0f * delta_time);
         }
@@ -78,10 +78,6 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
             camera.move(movement * 5.0f * delta_time);
         }
     }
-}
-
-void Camera::setRotation(float degrees)
-{
 }
 
 const sf::View &Camera::getCamera() const

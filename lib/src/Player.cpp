@@ -1,17 +1,15 @@
 #include <Player.hpp>
-#include <iostream>
 
 Player::Player() : sprite(texture)
 {
-    if (!texture.loadFromFile("./assets/textures/slime.png"))
+    if (!texture.loadFromFile("./assets/textures/player-16.png"))
     {
         // Error - considerar excepciones
     }
     sprite.setTexture(texture);
-    sprite.setTextureRect({{0, 0}, {14, 15}});
-    sprite.setOrigin({7, 7.5});
-    // sprite.setScale({4, 4});
-    sprite.setPosition({512, 400});
+    sprite.setTextureRect({{0, 0}, {16, 16}});
+    sprite.setOrigin({8, 8});
+    sprite.setPosition({512, 200});
     grounded = false;
     jumping = false;
     free_movement = true;
@@ -20,6 +18,7 @@ Player::Player() : sprite(texture)
     max_health = 100;
     attack_points = 20;
     attack_range = 15;
+
 }
 
 Player::~Player()
@@ -49,12 +48,48 @@ void Player::takeDamage(int damage)
 
 void Player::draw(sf::RenderWindow &window) const
 {
+    sf::RectangleShape box_col({16, 16});
+    box_col.setOrigin({8, 8});
+    sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
+    box_col.setPosition(sprite.getPosition());
+    box_col.setRotation(rotation_angle);
+    box_col.setFillColor(sf::Color::Transparent);
+    box_col.setOutlineColor(sf::Color::Red);
+    box_col.setOutlineThickness(1);
+
+    rotation_angle = -sf::degrees(coordinates.angle - 90);
+    box_col.setRotation(rotation_angle);
+    window.draw(box_col);
     window.draw(sprite);
 }
 
-void Player::update(float delta_time)
+void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window)
 {
     coordinates.updateCoordinates(sprite.getPosition());
+    sprite_time += delta_time;
+
+    if (sprite_time >= 0.125f)
+    {
+        sprite_time = 0;
+        current_sprite = current_sprite + 1 >= 4 ? 0 : current_sprite += 1;
+        sprite.setTextureRect({{current_sprite * 16, 0}, {16, 16}});
+    }
+
+    player_boundary.setBoundary(XY(getPosition().x, getPosition().y), 8, 8, coordinates.rad_angle);
+
+    grounded = false;
+
+    for (auto ground : collision_list)
+    {
+        if (!ground->getIsEmpty())
+        {
+            if (player_boundary.intersectsSAT(ground->getBoundary()))
+            {
+                grounded = true;
+            }
+        }
+    }
+
     if (free_movement)
     {
         sf::Vector2f movement({0.0f, 0.0f});
@@ -98,19 +133,23 @@ void Player::update(float delta_time)
         sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
         sprite.setRotation(rotation_angle);
 
-        if (coordinates.radius <= 50)
-        {
-            grounded = true;
-        }
-        else
-        {
-            grounded = false;
-        }
-
         if (!grounded)
         {
             gravity_movement.x = (-0.5f) * std::cos(coordinates.rad_angle);
             gravity_movement.y = (0.5f) * std::sin(coordinates.rad_angle);
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+            {
+                sprite.setScale({-1, 1});
+                movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
+                movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+            {
+                sprite.setScale({1, 1});
+                movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
+                movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
+            }
         }
         else
         {
@@ -119,6 +158,20 @@ void Player::update(float delta_time)
                 grounded = false;
                 jumping = true;
                 jump_timer = 0;
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                for (auto ground : collision_list)
+                {
+                    sf::Vector2i click_pos = sf::Mouse::getPosition(window);
+                    sf::Vector2f absolute_pos = window.mapPixelToCoords(click_pos);
+
+                    if (ground->getBoundary().containsXY(XY(absolute_pos.x, absolute_pos.y)))
+                    {
+                        ground->undermine();
+                    }
+                }
             }
         }
 
@@ -135,25 +188,7 @@ void Player::update(float delta_time)
             jump_vector *= delta_time;
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-        {
-            sprite.setScale({-1, 1});
-            movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
-            movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-        {
-            sprite.setScale({1, 1});
-            movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
-            movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
-        }
-
         sprite.move(gravity_movement + (movement * SPEED * delta_time) + jump_vector);
-
-        // if (movement.x != 0.0f || movement.y != 0.0f)
-        // {
-        //     float magnitude = std::sqrt(std::pow(movement.x, 2) + std::pow(movement.y, 2));
-        //     movement /= magnitude;
-        // }
     }
+
 }

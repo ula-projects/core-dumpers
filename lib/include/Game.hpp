@@ -22,11 +22,14 @@ private:
     int game_state;
 
     sf::Texture ground_texture;
+    sf::Texture background_texture;
     sf::Sprite ground;
+    sf::Sprite background;
     shared_ptr<sf::Sprite> ground_ptr;
 
     sf::Texture enemy_texture;
     
+
 public:
     Game();
     void draw(sf::RenderWindow &window);

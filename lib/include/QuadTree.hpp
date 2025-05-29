@@ -1,11 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <QuadTreeNode.hpp>
-#include <memory>
-
-template <typename T>
-using shared_ptr = std::shared_ptr<T>;
-template <typename T, std::size_t N>
-using array = std::array<T, N>;
 
 class QuadTree
 {
@@ -20,4 +14,5 @@ public:
     void draw(sf::RenderWindow &window, shared_ptr<sf::Sprite> &ground) const;
     void setBoundary(AABB _boundary);
     void generateWorld();
+    vector<shared_ptr<QuadTreeNode>> queryRange(AABB &_boundary);
 };

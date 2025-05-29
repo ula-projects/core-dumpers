@@ -13,6 +13,5 @@ public:
     ~Camera();
     void setCenter(sf::Vector2f center, float delta_time);
     sf::Vector2f getCenter();
-    void setRotation(float degrees);
     const sf::View &getCamera() const;
 };

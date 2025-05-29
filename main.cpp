@@ -5,7 +5,7 @@
 int main()
 {
     // SFML Window
-    sf::RenderWindow window(sf::VideoMode({800, 800}), "Core Dumpers!");
+    sf::RenderWindow window(sf::VideoMode({1280, 720}), "Core Dumpers!", sf::Style::Close);
     window.setFramerateLimit(60);
 
     // Game
