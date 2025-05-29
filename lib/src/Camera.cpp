@@ -1,4 +1,4 @@
-#include <Camera.hpp>
+#include "Camera.hpp"
 
 Camera::Camera()
 {
@@ -60,7 +60,7 @@ void Camera::setCenter(sf::Vector2f center, float delta_time)
         // Ajustamos la magnitud del vector
         if (movement.x != 0.0f || movement.y != 0.0f)
         {
-            float magnitude = std::sqrt(std::pow(movement.x, 2) + std::pow(movement.y, 2));
+            float magnitude = std::sqrt(movement.x * movement.x + movement.y * movement.y);
             movement /= magnitude;
         }
 

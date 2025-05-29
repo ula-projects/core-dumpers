@@ -1,5 +1,7 @@
-#include <SFML/Graphics.hpp>
+#pragma once
+
 #include <cmath>
+#include <SFML/Graphics.hpp>
 
 struct PolarCoordinates
 {

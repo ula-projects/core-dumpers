@@ -1,4 +1,4 @@
-#include <AABB.hpp>
+#include "AABB.hpp"
 
 XY::XY()
 {
@@ -25,7 +25,7 @@ void XY::setCoordinates(float _x, float _y)
 
 XY XY::normalizedVector()
 {
-    float h = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+    float h = std::sqrt(x * x + y * y);
     return h > 0 ? XY(x / h, y / h) : XY(0, 0);
 }
 
@@ -60,7 +60,7 @@ void AABB::setBoundary(XY _center, float _width, float _height)
 
 bool AABB::isCenterInsideCircle(XY _center, float _radius)
 {
-    return std::sqrt(std::pow(std::abs(center.x - _center.x), 2) + std::pow(std::abs(center.y - _center.y), 2)) <= _radius;
+    return std::sqrt((center.x - _center.x) * (center.x - _center.x) + (center.y - _center.y) * (center.y - _center.y)) <= _radius;
 }
 
 bool AABB::isRegionInsideCircle(XY _center, float _radius)
@@ -76,7 +76,7 @@ bool AABB::isRegionInsideCircle(XY _center, float _radius)
         float x = corner[0];
         float y = corner[1];
 
-        if (std::sqrt(std::pow(x - _center.x, 2) + std::pow(y - _center.y, 2)) > _radius)
+        if ((x - _center.x) * (x - _center.x) + (y - _center.y) * (y - _center.y) > _radius * _radius)
         {
             return false;
         }
@@ -95,7 +95,7 @@ bool AABB::isRegionOutsideCircle(XY _center, float _radius)
     float cx = std::abs(center.x - _center.x) - half_width / 2;
     float cy = std::abs(center.y - _center.y) - half_height / 2;
 
-    return std::sqrt(std::pow(cx, 2) + std::pow(cy, 2)) > _radius;
+    return (cx * cx + cy * cy) > (_radius * _radius);
 }
 
 float AABB::minX() const { return center.x - half_width; }
