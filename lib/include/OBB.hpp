@@ -1,5 +1,7 @@
-#include <AABB.hpp>
+#pragma once
+
 #include <algorithm>
+#include "AABB.hpp"
 
 struct OBB : public AABB
 {

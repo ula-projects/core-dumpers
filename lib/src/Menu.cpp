@@ -1,5 +1,5 @@
-#include <Menu.hpp>
 #include <iostream>
+#include "Menu.hpp"
 
 Menu::Menu() : background(background_texture), game_title(font), game_start(font)
 {

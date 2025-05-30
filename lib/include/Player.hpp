@@ -1,9 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <Coordinates.hpp>
-#include <QuadTreeNode.hpp>
-#include <OBB.hpp>
+#include "Coordinates.hpp"
+#include "QuadTreeNode.hpp"
+#include "OBB.hpp"
 
 class Player
 {
@@ -11,11 +11,11 @@ private:
     PolarCoordinates coordinates;
     sf::Texture texture;
     sf::Sprite sprite;
-
+    
     int health_points;
     int max_health;
     int attack_points;
-    int attack_range;
+    float attack_range;
 
     float SPEED = 50.0f;
 
@@ -35,6 +35,4 @@ public:
     void takeDamage(int damage);
     void draw(sf::RenderWindow &window) const;
     void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window);
-    int getHealthPoints() const;
-    void takeDamage(int damage);
 };

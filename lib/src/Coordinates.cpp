@@ -1,4 +1,4 @@
-#include <Coordinates.hpp>
+#include "Coordinates.hpp"
 
 PolarCoordinates::PolarCoordinates()
 {
@@ -12,7 +12,7 @@ void PolarCoordinates::updateCoordinates(sf::Vector2f position)
     float pos_y = -position.y;
 
     // radius = std::abs(std::sqrt(std::pow(pos_x, 2) + std::pow(pos_y, 2)) - std::sqrt(std::pow(512, 2) + std::pow(512, 2)));
-    radius = std::abs(std::sqrt(std::pow(pos_x - 512, 2) + std::pow(pos_y + 512, 2)));
+    radius = std::abs(std::sqrt((pos_x - 512) * (pos_x - 512) + (pos_y + 512) * (pos_y + 512)));
 
     rad_angle = std::atan2(pos_y + 512, pos_x - 512);
     angle = rad_angle * 180 / M_PI;

@@ -1,12 +1,12 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <Player.hpp>
-#include <QuadTree.hpp>
-#include <Planet.hpp>
-#include <Camera.hpp>
-#include <Menu.hpp>
-#include <Enemy.hpp>
+#include "Player.hpp"
+#include "QuadTree.hpp"
+#include "Planet.hpp"
+#include "Camera.hpp"
+#include "Menu.hpp"
+#include "Enemy.hpp"
 
 class Game
 {
@@ -28,7 +28,12 @@ private:
     shared_ptr<sf::Sprite> ground_ptr;
 
     sf::Texture enemy_texture;
-    
+
+    AABB view_boundary;
+    vector<shared_ptr<QuadTreeNode>> ground_list;
+
+    AABB collision_boundary;
+    vector<shared_ptr<QuadTreeNode>> collision_list;
 
 public:
     Game();

@@ -1,5 +1,7 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
-#include <QuadTreeNode.hpp>
+#include "QuadTreeNode.hpp"
 
 class QuadTree
 {

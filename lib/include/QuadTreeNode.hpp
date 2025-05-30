@@ -1,8 +1,9 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <AABB.hpp>
+
 #include <memory>
 #include <vector>
+#include <SFML/Graphics.hpp>
+#include "AABB.hpp"
 
 template <typename T>
 using shared_ptr = std::shared_ptr<T>;
