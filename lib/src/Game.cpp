@@ -1,94 +1,78 @@
-#include <Game.hpp>
-#include <iostream>
+#include "Game.hpp"
 
-// : camera(player.getPosition()), ground(ground_texture), background(background_texture)
-Game::Game()
+Game::Game() : world(gravity), player(world), planet(world), background(Settings::textures["background"])
 {
-    try
+    game_state = GameState::MainMenu;
+    gravity = b2Vec2(0.f, 0.f);
+    world.SetGravity(gravity);
+    planet.generateFromImage();
+    background.setTextureRect({{0, 0}, {1024, 1024}});
+    background.setOrigin({512, 512});
+}
+
+Game::~Game()
+{
+}
+
+void Game::update(float delta_time, sf::RenderWindow &window)
+{
+    switch (game_state)
     {
-        // game_settings.init();
+    case GameState::MainMenu:
+        menu.mainMenuUpdate(window, game_state);
+        break;
+    case GameState::Loading:
+        game_state = GameState::Playing;
+        break;
+    case GameState::Playing:
+        world.Step(1.f / 60.f, 8, 3);
+        camera.update(player.getPosition(), delta_time);
+        player.update(delta_time);
+        break;
+    case GameState::Paused:
+        break;
+    default:
+        break;
     }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-
-    // world_center.setCoordinates(512, 512);
-    // world_boundary.setBoundary(world_center, 512, 512);
-
-    // qt.setBoundary(world_boundary);
-    // qt.generateWorld();
-
-    // if (!ground_texture.loadFromFile("./assets/textures/world_tileset.png"))
-    // {
-    // }
-    // ground.setTextureRect({{0, 16}, {16, 16}});
-    // ground.setOrigin({8, 8});
-    // ground_ptr = std::make_shared<sf::Sprite>(ground);
-    // if (!background_texture.loadFromFile("./assets/textures/nebula-3.png"))
-    // {
-    // }
-    // background.setTextureRect({{0, 0}, {1024, 1024}});
-
-    // view_boundary.setBoundary(XY(camera.getCenter().x, camera.getCenter().y), 160, 90);
-
-    // collision_boundary.setBoundary(XY(player.getPosition().x, player.getPosition().y), 16, 16);
-
-    // game_state = 0;
 }
 
 void Game::draw(sf::RenderWindow &window)
 {
-
-    // if (game_state == 0)
-    // {
-    //     menu.mainMenuDraw(window);
-    // }
-    // else if (game_state == 1)
-    // {
-    //     window.draw(background);
-    //     for (auto ground : ground_list)
-    //     {
-    //         ground->draw(window, ground_ptr);
-    //     }
-    //     window.setView(camera.getCamera());
-    //     player.draw(window);
-    // }
-}
-
-void Game::update(float &delta_time, sf::RenderWindow &window)
-{
-
     switch (game_state)
     {
     case GameState::MainMenu:
+
+        background.setPosition({Settings::SCREEN_WIDTH / 2, Settings::SCREEN_HEIGHT / 2});
+        background.setScale({1.25f, 1.25f});
+        window.draw(background);
+        menu.mainMenuDraw(window);
+        break;
+    case GameState::Loading:
+        background.setPosition({Settings::SCREEN_WIDTH / 2, Settings::SCREEN_HEIGHT / 2});
+        background.setScale({1.25f, 1.25f});
+        window.draw(background);
         break;
     case GameState::Playing:
+        window.setView(camera.getCamera());
+        background.setPosition({512, 512});
+        background.setScale({1.f, 1.f});
+        window.draw(background);
+        planet.draw(window, player.getPosition());
+        player.draw(window);
         break;
     case GameState::Paused:
         break;
-    case GameState::GameOver:
-        break;
-    case GameState::Exiting:
-        break;
-
     default:
         break;
     }
-    // view_boundary.setBoundary(XY(camera.getCenter().x, camera.getCenter().y), view_boundary.half_width, view_boundary.half_height);
-    // collision_boundary.setBoundary(XY(player.getPosition().x, player.getPosition().y), collision_boundary.half_width, collision_boundary.half_height);
-
-    // // Menu Principal
-    // if (game_state == 0)
-    // {
-    //     menu.mainMenuUpdate(window, game_state);
-    // }
-    // // Juego
-    // else if (game_state == 1)
-    // {
-    //     ground_list = qt.queryRange(view_boundary);
-    //     collision_list = qt.queryRange(collision_boundary);
-    //     player.update(delta_time, collision_list, window);
-    //     camera.setCenter(player.getPosition(), delta_time);
-    // }
 }
+
+// GameState Game::getGameState()
+// {
+//     return game_state;
+// }
+
+// void Game::setGameState(GameState _state)
+// {
+//     game_state = _state;
+// }

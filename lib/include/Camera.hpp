@@ -1,5 +1,4 @@
-#include <SFML/Graphics.hpp>
-#include <cmath>
+#include "Settings.hpp"
 
 class Camera
 {
@@ -11,7 +10,8 @@ public:
     Camera();
     Camera(sf::Vector2f center);
     ~Camera();
-    void setCenter(sf::Vector2f center, float delta_time);
+
+    void update(sf::Vector2f center, float delta_time);
     sf::Vector2f getCenter();
     const sf::View &getCamera() const;
 };
