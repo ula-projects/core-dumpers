@@ -10,7 +10,7 @@ class Enemy
 protected:
     PolarCoordinates coordinates;
     sf::Sprite sprite;
-    b2Body *player_b2_body;
+    b2Body *enemy_b2_body;
     float health_points;
     float max_health;
     float attack_points;
@@ -36,6 +36,8 @@ protected:
     virtual NodeStatus rest() = 0;
     virtual NodeStatus patrolArea() = 0;
 
+    sf::Clock action_clock;
+
     std::shared_ptr<BTNode> createEnemyBehaviorTree();
 
 public:
@@ -48,6 +50,7 @@ public:
     void takeDamage(int damage);
     void setTarget(std::shared_ptr<Player> _player);
     void update(const float delta_time);
+    void init(b2World &world, sf::Vector2f init_position);
 
     void draw(sf::RenderWindow &window);
 };

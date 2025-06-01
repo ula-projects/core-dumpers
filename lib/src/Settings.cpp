@@ -45,7 +45,7 @@ void Settings::loadTextures()
 
     sf::Texture enemy_texture{};
 
-    if (!background_texture.loadFromFile(Settings::GRAPHICS_PATH / "enemy.png"))
+    if (!enemy_texture.loadFromFile(Settings::GRAPHICS_PATH / "enemy.png"))
     {
         throw std::runtime_error{"Error loading enemy texture"};
     }

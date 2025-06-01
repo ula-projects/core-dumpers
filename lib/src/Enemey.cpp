@@ -2,410 +2,439 @@
 
 Enemy::Enemy() : sprite(Settings::textures["enemy"])
 {
+    sprite.setTextureRect({{0, 0}, {static_cast<int>(Settings::TILE_SIZE), static_cast<int>(Settings::TILE_SIZE)}});
 }
 
-// void Enemy::takeDamage(int damage)
-// {
-//     health_points -= damage;
+void Enemy::init(b2World &world, sf::Vector2f init_position)
+{
+    b2BodyDef body_def;
+    body_def.type = b2_dynamicBody;
+    body_def.position.Set(init_position.x, init_position.y);
+    enemy_b2_body = world.CreateBody(&body_def);
 
-//     sprite.setColor(sf::Color(255, 100, 100, sprite.getColor().a)); // Aplicar modificador de color
+    // Configurando la forma
+    float half = Settings::TILE_SIZE / 2.f;
+    b2PolygonShape box_collider;
+    box_collider.SetAsBox(half, half);
 
-//     if (health_points <= 0)
-//     {
-//         // asignar drop al player
-//         health_points = 0;
-//     }
-// }
+    // Configurando el fixture
+    b2FixtureDef fixture_def;
+    fixture_def.shape = &box_collider;
+    fixture_def.density = 0.01f;
+    fixture_def.friction = 1.f;
+    fixture_def.restitution = 0.f;
+    enemy_b2_body->CreateFixture(&fixture_def);
 
-// int Enemy::getHealthPoints() const
-// {
-//     return health_points;
-// }
+    enemy_b2_body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 
-// int Enemy::getVisionRange() const
-// {
-//     return vision_range;
-// }
+    b2Vec2 pos = enemy_b2_body->GetPosition();
+    sprite.setPosition({pos.x, pos.y});
+}
 
-// sf::Vector2f Enemy::getPosition() const
-// {
-//     return sprite.getPosition();
-// }
+void Enemy::takeDamage(int damage)
+{
+    health_points -= damage;
 
-// void Enemy::setTarget(std::shared_ptr<Player> _player)
-// {
-//     if (_player)
-//     {
-//         target = _player;
-//     }
-// }
+    sprite.setColor(sf::Color(255, 100, 100, sprite.getColor().a)); // Aplicar modificador de color
 
-// bool Enemy::checkTargetStatus()
-// {
-//     if (target == nullptr)
-//     {
-//         return false;
-//     }
+    if (health_points <= 0)
+    {
+        // asignar drop al player
+        health_points = 0;
+    }
+}
 
-//     if (target->getHealthPoints() <= 0)
-//     {
-//         target.reset();
-//         return false;
-//     }
-//     return true;
-// }
+int Enemy::getHealthPoints() const
+{
+    return health_points;
+}
 
-// void Enemy::draw(sf::RenderWindow &window)
-// {
-//     window.draw(sprite);
+int Enemy::getVisionRange() const
+{
+    return vision_range;
+}
 
-//     if (debug_options)
-//     {
-//         sf::CircleShape vision_area;
-//         sf::CircleShape attack_area;
-//         vision_area.setRadius(vision_range);
-//         vision_area.setFillColor(sf::Color::Transparent);
-//         vision_area.setOutlineColor(sf::Color::Yellow);
-//         vision_area.setOutlineThickness(1.0f);
-//         vision_area.setOrigin({vision_range, vision_range});
-//         vision_area.setPosition(getPosition());
-//         attack_area.setRadius(attack_range);
-//         attack_area.setFillColor(sf::Color::Transparent);
-//         attack_area.setOutlineColor(sf::Color::Magenta);
-//         attack_area.setOutlineThickness(1.0f);
-//         attack_area.setOrigin({attack_range, attack_range});
-//         attack_area.setPosition(getPosition());
-//         window.draw(vision_area);
-//         window.draw(attack_area);
-//     }
-// }
+sf::Vector2f Enemy::getPosition() const
+{
+    return sprite.getPosition();
+}
 
-// // Implementaciones de funciones condicion
-// bool Enemy::isPlayerNear()
-// {
-//     if (!checkTargetStatus())
-//     {
-//         return false;
-//     }
+void Enemy::setTarget(std::shared_ptr<Player> _player)
+{
+    if (_player)
+    {
+        target = _player;
+    }
+}
 
-//     float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
-//     if (distance < vision_range)
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Player ha entrado en el area de vision de Enemy" << std::endl;
-//         }
-//         return true;
-//     }
-//     return false;
-// }
+bool Enemy::checkTargetStatus()
+{
+    if (target == nullptr)
+    {
+        return false;
+    }
 
-// bool Enemy::isPlayerInAttackRange()
-// {
-//     if (!checkTargetStatus())
-//     {
-//         return false;
-//     }
+    if (target->getHealthPoints() <= 0)
+    {
+        target.reset();
+        return false;
+    }
+    return true;
+}
 
-//     float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
-//     if (distance < attack_range)
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Player ha entrado en el area de ataque de Enemy" << std::endl;
-//         }
-//         return true;
-//     }
-//     return false;
-// }
+void Enemy::draw(sf::RenderWindow &window)
+{
+    window.draw(sprite);
 
-// bool Enemy::isHealthLow()
-// {
-//     if (health_points < max_health)
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Enemy tiene poca vida" << std::endl;
-//         }
-//         return true;
-//     }
-//     return false;
-// }
+    if (debug_options)
+    {
+        sf::CircleShape vision_area;
+        sf::CircleShape attack_area;
+        vision_area.setRadius(vision_range);
+        vision_area.setFillColor(sf::Color::Transparent);
+        vision_area.setOutlineColor(sf::Color::Yellow);
+        vision_area.setOutlineThickness(1.0f);
+        vision_area.setOrigin({vision_range, vision_range});
+        vision_area.setPosition(getPosition());
+        attack_area.setRadius(attack_range);
+        attack_area.setFillColor(sf::Color::Transparent);
+        attack_area.setOutlineColor(sf::Color::Magenta);
+        attack_area.setOutlineThickness(1.0f);
+        attack_area.setOrigin({attack_range, attack_range});
+        attack_area.setPosition(getPosition());
+        window.draw(vision_area);
+        window.draw(attack_area);
+    }
+}
 
-// // Implementacion del arbol de comportamiento del enemy
-// std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
-// {
-//     // Comportamiento principal - Selector
-//     auto main_behavior = std::make_shared<SelectorNode>();
+// Implementaciones de funciones condicion
+bool Enemy::isPlayerNear()
+{
+    if (!checkTargetStatus())
+    {
+        return false;
+    }
 
-//     // Primera rama: Secuencia para comportamiento de combate
-//     auto combat_sequence = std::make_shared<SequenceNode>();
-//     {
-//         // Condicion: Enemigo cerca?
-//         combat_sequence->addChild(std::make_shared<ConditionNode>([this]()
-//                                                                   { return isPlayerNear(); }));
+    float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
+    if (distance < vision_range)
+    {
+        if (debug_options)
+        {
+            std::cout << "Player ha entrado en el area de vision de Enemy" << std::endl;
+        }
+        return true;
+    }
+    return false;
+}
 
-//         // Selector para decidir que hacer con el enemigo cercano
-//         auto enemy_action_selector = std::make_shared<SelectorNode>();
-//         {
-//             // Opcion 1: Secuencia para atacar si esta al alcance
-//             auto attack_sequence = std::make_shared<SequenceNode>();
-//             {
-//                 // Condicion: Enemigo al alcance de ataque?
-//                 attack_sequence->addChild(std::make_shared<ConditionNode>([this]()
-//                                                                           { return isPlayerInAttackRange(); }));
+bool Enemy::isPlayerInAttackRange()
+{
+    if (!checkTargetStatus())
+    {
+        return false;
+    }
 
-//                 // Accion: Atacar al enemigo
-//                 attack_sequence->addChild(std::make_shared<ActionNode>([this]()
-//                                                                        { return attackPlayer(); }));
-//             }
+    float distance = std::hypot(target->getPosition().x - getPosition().x, target->getPosition().y - getPosition().y);
+    if (distance < attack_range)
+    {
+        if (debug_options)
+        {
+            std::cout << "Player ha entrado en el area de ataque de Enemy" << std::endl;
+        }
+        return true;
+    }
+    return false;
+}
 
-//             // Opcion 2: Acercarse al enemigo si no esta al alcance
-//             auto approach_action = std::make_shared<ActionNode>([this]()
-//                                                                 { return approachPlayer(); });
+bool Enemy::isHealthLow()
+{
+    if (health_points < max_health)
+    {
+        if (debug_options)
+        {
+            std::cout << "Enemy tiene poca vida" << std::endl;
+        }
+        return true;
+    }
+    return false;
+}
 
-//             enemy_action_selector->addChild(attack_sequence);
-//             enemy_action_selector->addChild(approach_action);
-//         }
+// Implementacion del arbol de comportamiento del enemy
+std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
+{
+    // Comportamiento principal - Selector
+    auto main_behavior = std::make_shared<SelectorNode>();
 
-//         combat_sequence->addChild(enemy_action_selector);
-//     }
+    // Primera rama: Secuencia para comportamiento de combate
+    auto combat_sequence = std::make_shared<SequenceNode>();
+    {
+        // Condicion: Enemigo cerca?
+        combat_sequence->addChild(std::make_shared<ConditionNode>([this]()
+                                                                  { return isPlayerNear(); }));
 
-//     // Segunda rama: Selector para comportamiento cuando no hay enemigos cerca
-//     auto idle_selector = std::make_shared<SelectorNode>();
-//     {
-//         // Opcion 1: Secuencia para descansar si tiene poca vida
-//         auto rest_sequence = std::make_shared<SequenceNode>();
-//         {
-//             // Condicion: Tiene poca vida?
-//             rest_sequence->addChild(std::make_shared<ConditionNode>([this]()
-//                                                                     { return isHealthLow(); }));
+        // Selector para decidir que hacer con el enemigo cercano
+        auto enemy_action_selector = std::make_shared<SelectorNode>();
+        {
+            // Opcion 1: Secuencia para atacar si esta al alcance
+            auto attack_sequence = std::make_shared<SequenceNode>();
+            {
+                // Condicion: Enemigo al alcance de ataque?
+                attack_sequence->addChild(std::make_shared<ConditionNode>([this]()
+                                                                          { return isPlayerInAttackRange(); }));
 
-//             // Accion: Descansar para recuperar vida
-//             rest_sequence->addChild(std::make_shared<ActionNode>([this]()
-//                                                                  { return rest(); }));
-//         }
+                // Accion: Atacar al enemigo
+                attack_sequence->addChild(std::make_shared<ActionNode>([this]()
+                                                                       { return attackPlayer(); }));
+            }
 
-//         // Opcion 2: Patrullar la zona si no tiene poca vida
-//         auto patrol_action = std::make_shared<ActionNode>([this]()
-//                                                           { return patrolArea(); });
+            // Opcion 2: Acercarse al enemigo si no esta al alcance
+            auto approach_action = std::make_shared<ActionNode>([this]()
+                                                                { return approachPlayer(); });
 
-//         idle_selector->addChild(rest_sequence);
-//         idle_selector->addChild(patrol_action);
-//     }
+            enemy_action_selector->addChild(attack_sequence);
+            enemy_action_selector->addChild(approach_action);
+        }
 
-//     // Anadir ambas ramas al comportamiento principal
-//     main_behavior->addChild(combat_sequence);
-//     main_behavior->addChild(idle_selector);
+        combat_sequence->addChild(enemy_action_selector);
+    }
 
-//     return main_behavior;
-// }
+    // Segunda rama: Selector para comportamiento cuando no hay enemigos cerca
+    auto idle_selector = std::make_shared<SelectorNode>();
+    {
+        // Opcion 1: Secuencia para descansar si tiene poca vida
+        auto rest_sequence = std::make_shared<SequenceNode>();
+        {
+            // Condicion: Tiene poca vida?
+            rest_sequence->addChild(std::make_shared<ConditionNode>([this]()
+                                                                    { return isHealthLow(); }));
 
-// void Enemy::update(const float delta_time)
-// {
-//     regen_cooldown
-//     behavior_tree_root->execute();
+            // Accion: Descansar para recuperar vida
+            rest_sequence->addChild(std::make_shared<ActionNode>([this]()
+                                                                 { return rest(); }));
+        }
 
-//     coordinates.updateCoordinates(sprite.getPosition());
-//     sf::Angle rotation_angle = -sf::degrees(coordinates.deg_angle - 90);
-//     sprite.setRotation(rotation_angle);
-//     if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
-//     {
-//         sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
-//     }
-// }
+        // Opcion 2: Patrullar la zona si no tiene poca vida
+        auto patrol_action = std::make_shared<ActionNode>([this]()
+                                                          { return patrolArea(); });
 
-// FlyingEnemy::FlyingEnemy(sf::Vector2f position) : Enemy()
-// {
-//     health_points = 100;
-//     max_health = 100;
-//     attack_points = 10;
-//     attack_range = 30;
-//     vision_range = 120;
-//     debug_options = true;
-//     attack_cooldown = 1.0f;
-//     regen_cooldown = 2.0f;
-//     direction = 0;
-//     behavior_tree_root = createEnemyBehaviorTree();
+        idle_selector->addChild(rest_sequence);
+        idle_selector->addChild(patrol_action);
+    }
 
-//     sprite.setOrigin({8, 8});
-//     sprite.setPosition(position);
-// }
+    // Anadir ambas ramas al comportamiento principal
+    main_behavior->addChild(combat_sequence);
+    main_behavior->addChild(idle_selector);
 
-// NodeStatus FlyingEnemy::attackPlayer()
-// {
-//     if (!checkTargetStatus())
-//     {
-//         return NodeStatus::FAILURE;
-//     }
+    return main_behavior;
+}
 
-//     // Atacar al objetivo
-//     if (action_clock.getElapsedTime().asSeconds() >= attack_cooldown)
-//     {
-//         target->takeDamage(attack_points);
-//         if (debug_options)
-//         {
-//             std::cout << "Enemy ha atacado a Player" << std::endl;
-//         }
-//         action_clock.restart();
+void Enemy::update(const float delta_time)
+{
+    behavior_tree_root->execute();
 
-//         checkTargetStatus();
-//         return NodeStatus::SUCCESS;
-//     }
+    coordinates.updateCoordinates(sprite.getPosition());
+    sf::Angle rotation_angle = -sf::degrees(coordinates.deg_angle - 90);
+    sprite.setRotation(rotation_angle);
+    if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
+    {
+        sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
+    }
+    b2Vec2 pos = enemy_b2_body->GetPosition();
+    sprite.setPosition({pos.x, pos.y});
+    sprite.setRotation(sf::Angle(sf::radians(enemy_b2_body->GetAngle())));
+}
 
-//     if (debug_options)
-//     {
-//         std::cout << "El ataque de Enemy se retraso debido al Cooldown" << std::endl;
-//     }
+FlyingEnemy::FlyingEnemy(sf::Vector2f position) : Enemy()
+{
+    health_points = 100;
+    max_health = 100;
+    attack_points = 10;
+    attack_range = 30;
+    vision_range = 120;
+    debug_options = true;
+    attack_cooldown = 1.0f;
+    regen_cooldown = 2.0f;
+    direction = 0;
+    behavior_tree_root = createEnemyBehaviorTree();
 
-//     return NodeStatus::RUNNING;
-// }
+    sprite.setOrigin({8, 8});
+    sprite.setPosition(position);
+}
 
-// NodeStatus FlyingEnemy::approachPlayer()
-// {
-//     if (!checkTargetStatus())
-//     {
-//         return NodeStatus::FAILURE;
-//     }
+NodeStatus FlyingEnemy::attackPlayer()
+{
+    if (!checkTargetStatus())
+    {
+        return NodeStatus::FAILURE;
+    }
 
-//     // Acercarse al objetivo
-//     sf::Vector2f enemy_position = getPosition();
-//     sf::Vector2f target_position = target->getPosition();
+    // Atacar al objetivo
+    if (action_clock.getElapsedTime().asSeconds() >= attack_cooldown)
+    {
+        // target->takeDamage(attack_points);
+        if (debug_options)
+        {
+            std::cout << "Enemy ha atacado a Player" << std::endl;
+        }
+        action_clock.restart();
 
-//     sf::Vector2f direction = target_position - enemy_position;
-//     float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        checkTargetStatus();
+        return NodeStatus::SUCCESS;
+    }
 
-//     if (magnitude > vision_range)
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Approach interrumpido, Player ha salido del area de vision" << std::endl;
-//         }
-//         return NodeStatus::FAILURE;
-//     }
+    if (debug_options)
+    {
+        std::cout << "El ataque de Enemy se retraso debido al Cooldown" << std::endl;
+    }
 
-//     if (magnitude > attack_range - 10.0f)
-//     {
-//         direction /= magnitude;
-//         sprite.move(direction * speed * delta_time);
-//         if (debug_options)
-//         {
-//             std::cout << "Enemy se esta acercando a Player" << std::endl;
-//         }
-//         return NodeStatus::RUNNING;
-//     }
+    return NodeStatus::RUNNING;
+}
 
-//     return NodeStatus::SUCCESS;
-// }
+NodeStatus FlyingEnemy::approachPlayer()
+{
+    if (!checkTargetStatus())
+    {
+        return NodeStatus::FAILURE;
+    }
 
-// NodeStatus FlyingEnemy::rest()
-// {
-//     checkTargetStatus();
+    // Acercarse al objetivo
+    sf::Vector2f enemy_position = getPosition();
+    sf::Vector2f target_position = target->getPosition();
 
-//     if (isPlayerNear())
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Rest interrumpido, Player ha entrado en el area de vision" << std::endl;
-//         }
-//         return NodeStatus::FAILURE;
-//     }
+    sf::Vector2f direction = target_position - enemy_position;
+    float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-//     if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown)
-//     {
-//         if (health_points < max_health)
-//         {
-//             health_points += 3;
-//             sprite.setColor(sf::Color(150, 255, 150, sprite.getColor().a)); // Aplicar modificador de color verde
+    if (magnitude > vision_range)
+    {
+        if (debug_options)
+        {
+            std::cout << "Approach interrumpido, Player ha salido del area de vision" << std::endl;
+        }
+        return NodeStatus::FAILURE;
+    }
 
-//             if (health_points > max_health)
-//             {
-//                 health_points = max_health;
-//             }
+    if (magnitude > attack_range - 10.0f)
+    {
+        direction /= magnitude;
+        sprite.move(direction * Settings::ENEMY_SPEED);
+        if (debug_options)
+        {
+            std::cout << "Enemy se esta acercando a Player" << std::endl;
+        }
+        return NodeStatus::RUNNING;
+    }
 
-//             if (debug_options)
-//             {
-//                 std::cout << "Enemy ha regenerado vida, vida actual: " << getHealthPoints() << std::endl;
-//             }
-//             action_clock.restart();
-//             return NodeStatus::RUNNING;
-//         }
-//         return NodeStatus::SUCCESS;
-//     }
-//     return NodeStatus::RUNNING;
-// }
+    return NodeStatus::SUCCESS;
+}
 
-// NodeStatus FlyingEnemy::patrolArea()
-// {
-//     if (isPlayerNear())
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Patrol completado, Player ha entrado en el area de vision" << std::endl;
-//         }
-//         direction = 0;
+NodeStatus FlyingEnemy::rest()
+{
+    checkTargetStatus();
 
-//         checkTargetStatus();
-//         return NodeStatus::SUCCESS;
-//     }
-//     else
-//     {
-//         if (debug_options)
-//         {
-//             std::cout << "Enemy esta patrullando la zona" << std::endl;
-//         }
-//         if (direction == 0)
-//         {
-//             direction = 1;
-//             action_clock.restart();
-//         }
+    if (isPlayerNear())
+    {
+        if (debug_options)
+        {
+            std::cout << "Rest interrumpido, Player ha entrado en el area de vision" << std::endl;
+        }
+        return NodeStatus::FAILURE;
+    }
 
-//         sf::Vector2f movement({0.0f, 0.0f});
+    if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown)
+    {
+        if (health_points < max_health)
+        {
+            health_points += 3;
+            sprite.setColor(sf::Color(150, 255, 150, sprite.getColor().a)); // Aplicar modificador de color verde
 
-//         float patrol_cycle_time = 3.0f;
-//         if (action_clock.getElapsedTime().asSeconds() >= patrol_cycle_time)
-//         {
-//             direction *= -1;
-//             action_clock.restart();
-//         }
+            if (health_points > max_health)
+            {
+                health_points = max_health;
+            }
 
-//         if (direction == 1) // right
-//         {
-//             movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
-//             movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
-//             if (debug_options)
-//             {
-//                 std::cout << "Enemy patrulla a la derecha" << std::endl;
-//             }
-//         }
+            if (debug_options)
+            {
+                std::cout << "Enemy ha regenerado vida, vida actual: " << getHealthPoints() << std::endl;
+            }
+            action_clock.restart();
+            return NodeStatus::RUNNING;
+        }
+        return NodeStatus::SUCCESS;
+    }
+    return NodeStatus::RUNNING;
+}
 
-//         if (direction == -1) // left
-//         {
-//             movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
-//             movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
-//             if (debug_options)
-//             {
-//                 std::cout << "Enemy patrulla a la izquierda" << std::endl;
-//             }
-//         }
+NodeStatus FlyingEnemy::patrolArea()
+{
+    if (isPlayerNear())
+    {
+        if (debug_options)
+        {
+            std::cout << "Patrol completado, Player ha entrado en el area de vision" << std::endl;
+        }
+        direction = 0;
 
-//         sprite.move(movement * speed * delta_time);
-//         checkTargetStatus();
-//         return NodeStatus::RUNNING;
-//     }
-// }
+        checkTargetStatus();
+        return NodeStatus::SUCCESS;
+    }
+    else
+    {
+        if (debug_options)
+        {
+            std::cout << "Enemy esta patrullando la zona" << std::endl;
+        }
+        if (direction == 0)
+        {
+            direction = 1;
+            action_clock.restart();
+        }
 
-// void InteractionManager(std::vector<std::shared_ptr<Enemy>> &enemies, std::shared_ptr<Player> player)
-// {
-//     for (auto &enemy : enemies)
-//     {
-//         if (enemy->getHealthPoints() > 0 && player->getHealthPoints() > 0)
-//         {
-//             float distance = std::hypot(player->getPosition().x - enemy->getPosition().x, player->getPosition().y - enemy->getPosition().y);
-//             if (distance < enemy->getVisionRange())
-//             {
-//                 enemy->setTarget(player);
-//             }
-//         }
-//     }
-// }
+        sf::Vector2f movement({0.0f, 0.0f});
+
+        float patrol_cycle_time = 3.0f;
+        if (action_clock.getElapsedTime().asSeconds() >= patrol_cycle_time)
+        {
+            direction *= -1;
+            action_clock.restart();
+        }
+
+        if (direction == 1) // right
+        {
+            movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
+            movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
+            if (debug_options)
+            {
+                std::cout << "Enemy patrulla a la derecha" << std::endl;
+            }
+        }
+
+        if (direction == -1) // left
+        {
+            movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
+            movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
+            if (debug_options)
+            {
+                std::cout << "Enemy patrulla a la izquierda" << std::endl;
+            }
+        }
+
+        sprite.move(movement * Settings::ENEMY_SPEED);
+        checkTargetStatus();
+        return NodeStatus::RUNNING;
+    }
+}
+
+void InteractionManager(std::vector<std::shared_ptr<Enemy>> &enemies, std::shared_ptr<Player> player)
+{
+    for (auto &enemy : enemies)
+    {
+        if (enemy->getHealthPoints() > 0 && player->getHealthPoints() > 0)
+        {
+            float distance = std::hypot(player->getPosition().x - enemy->getPosition().x, player->getPosition().y - enemy->getPosition().y);
+            if (distance < enemy->getVisionRange())
+            {
+                enemy->setTarget(player);
+            }
+        }
+    }
+}

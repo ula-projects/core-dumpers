@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Camera.hpp"
 #include "Picaxe.hpp"
+#include "Enemy.hpp"
 
 class Game
 {
@@ -23,6 +24,7 @@ private:
     // Game Components
     Planet planet;
     Player player;
+    std::vector<std::shared_ptr<Enemy>> enemies;
     Camera camera;
     Picaxe picaxe;
 

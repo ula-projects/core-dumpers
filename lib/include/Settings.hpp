@@ -23,6 +23,7 @@ struct Settings
     static const fs::path GRAPHICS_PATH;
 
     static constexpr float PLAYER_SPEED{1000.0f};
+    static constexpr float ENEMY_SPEED{10.0f};
     static constexpr float TILE_SIZE{16.0f};
     static constexpr unsigned int VIEW_RANGE{20};
     static constexpr float PLANET_RADIUS{256.0f};
