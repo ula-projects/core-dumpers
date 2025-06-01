@@ -22,14 +22,16 @@ struct Settings
     static const fs::path ASSETS_PATH;
     static const fs::path GRAPHICS_PATH;
 
-    static constexpr float PLAYER_SPEED{50.0f};
+    static constexpr float PLAYER_SPEED{1000.0f};
     static constexpr float TILE_SIZE{16.0f};
-    static constexpr unsigned int VIEW_RANGE{15};
+    static constexpr unsigned int VIEW_RANGE{20};
     static constexpr float PLANET_RADIUS{256.0f};
     static constexpr float PLANET_SIZE{512.0f};
-    static constexpr float WORLD_CENTER{PLANET_RADIUS * TILE_SIZE};
+    static constexpr float WORLD_CENTER{4096.f};
 
-    static constexpr float GRAVITY_FORCE{9.8f};
+    static constexpr float GRAVITY_FORCE{980.f};
+    static constexpr float JUMP_FORCE{3500.f};
+    static constexpr float PLAYER_VELOCITY{1500.f};
     static constexpr float SCREEN_WIDTH{1280};
     static constexpr float SCREEN_HEIGHT{720};
 

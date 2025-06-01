@@ -1,30 +1,48 @@
 #include "Player.hpp"
-#include <iostream>
 
-Player::Player(b2World &world) : sprite(Settings::textures["player"])
+Player::Player() : sprite(Settings::textures["player"])
 {
     sprite.setTextureRect({{0, 0}, {16, 16}});
     sprite.setOrigin({Settings::TILE_SIZE / 2.f, Settings::TILE_SIZE / 2.f});
-
-    // Configura cuerpo físico
-    b2BodyDef bodyDef;
-    bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(0.f, 0.f); // Posición inicial (en píxeles)
-    body = world.CreateBody(&bodyDef);
-
-    b2PolygonShape shape;
-    float half = Settings::TILE_SIZE / 2.f;
-    shape.SetAsBox(half, half); // Tamaño igual a un tile
-
-    b2FixtureDef fixtureDef;
-    fixtureDef.shape = &shape;
-    fixtureDef.density = 1.f;
-    fixtureDef.friction = 0.3f;
-    body->CreateFixture(&fixtureDef);
+    is_grounded = false;
+    is_jumping = true;
+    free_movement = false;
+    current_sprite = 0;
+    sprite_time = 0;
 }
 
 Player::~Player()
 {
+}
+
+void Player::init(b2World &world)
+{
+
+    // Configura Body para el box2d
+    b2BodyDef body_def;
+    body_def.type = b2_dynamicBody;
+    body_def.position.Set(4096.f, -16.f);
+    // body_def.position.Set(8220.f, 4096.f);
+    // body_def.position.Set(4096.f, 8220.f);
+    player_b2_body = world.CreateBody(&body_def);
+
+    // Configurando la forma
+    float half = Settings::TILE_SIZE / 2.f;
+    b2PolygonShape box_collider;
+    box_collider.SetAsBox(half, half);
+
+    // Configurando el fixture
+    b2FixtureDef fixture_def;
+    fixture_def.shape = &box_collider;
+    fixture_def.density = 0.01f;
+    fixture_def.friction = 1.f;
+    fixture_def.restitution = 0.f;
+    player_b2_body->CreateFixture(&fixture_def);
+
+    player_b2_body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
+
+    b2Vec2 pos = player_b2_body->GetPosition();
+    sprite.setPosition({pos.x, pos.y});
 }
 
 void Player::draw(sf::RenderWindow &window)
@@ -34,37 +52,92 @@ void Player::draw(sf::RenderWindow &window)
 
 void Player::update(float delta_time)
 {
-    float speed = 200.f;
-    std::cout << coordinates.rad_angle << "     \r" << std::flush;
+    if (is_grounded)
+    {
+        is_jumping = false;
+    }
 
     coordinates.updateCoordinates(getPosition());
 
-    b2Vec2 gravity(980.f, 970.f);
-    b2Vec2 vel(0.f, 0.f);
+    // actualizar sprite rect
+    sprite_time += delta_time;
+    if (sprite_time >= 0.125f)
+    {
+        sprite_time = 0;
+        current_sprite = current_sprite + 1 >= 4 ? 0 : ++current_sprite;
+        sprite.setTextureRect({{current_sprite * 16, 0}, {16, 16}});
+    }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-        vel.y -= speed;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-        vel.y += speed;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-        vel.x -= speed;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-        vel.x += speed;
+    // Movimientos del jugador
+    // Salto
+    if (is_grounded)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+        {
+            is_jumping = true;
+            is_grounded = false;
+            float jump_x = Settings::JUMP_FORCE * cosf(coordinates.rad_angle);
+            float jump_y = -Settings::JUMP_FORCE * sinf(coordinates.rad_angle);
+            b2Vec2 jump(jump_x, jump_y);
 
-    body->SetLinearVelocity(vel);
-    body->ApplyForce(gravity, body->GetWorldCenter(), true);
+            player_b2_body->ApplyLinearImpulse(jump, player_b2_body->GetWorldCenter(), true);
+        }
+    }
 
-    float angle = coordinates.rad_angle; // en radianes
-    body->SetTransform(body->GetPosition(), angle);
-    // Actualiza posición del sprite
-    b2Vec2 pos = body->GetPosition();
+    if (is_jumping)
+    {
+        float rotation_angle = -(coordinates.deg_angle - 90) * M_PI / 180;
+        player_b2_body->SetTransform(player_b2_body->GetPosition(), rotation_angle);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+        {
+            sprite.setScale({1, 1});
+            float angle = std::abs(coordinates.deg_angle - 90) * M_PI / 180;
+            float move_x = Settings::PLAYER_SPEED * cosf(angle);
+            float move_y = Settings::PLAYER_SPEED * sinf(angle);
+            b2Vec2 movemet(move_x, move_y);
+
+            player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+        {
+            sprite.setScale({-1, 1});
+            float angle = std::abs(coordinates.deg_angle + 90) * M_PI / 180;
+            float move_x = Settings::PLAYER_SPEED * cosf(angle);
+            float move_y = Settings::PLAYER_SPEED * sinf(angle);
+            b2Vec2 movemet(move_x, move_y);
+
+            player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
+        }
+    }
+
+    // mov derecha
+
+    // gravity
+    float gravity_x = -Settings::GRAVITY_FORCE * cosf(coordinates.rad_angle);
+    float gravity_y = Settings::GRAVITY_FORCE * sinf(coordinates.rad_angle);
+
+    b2Vec2 gravity(gravity_x, gravity_y);
+    player_b2_body->ApplyForce(gravity, player_b2_body->GetWorldCenter(), true);
+
+    // Actualizar sprite position y rotation
+    b2Vec2 pos = player_b2_body->GetPosition();
     sprite.setPosition({pos.x, pos.y});
-
-    sprite.setRotation(sf::Angle(sf::radians(body->GetAngle())));
-    // sprite.setRotation(sf::Angle(-sf::degrees(coordinates.deg_angle - 90)));
+    sprite.setRotation(sf::Angle(sf::radians(player_b2_body->GetAngle())));
 }
 
 sf::Vector2f Player::getPosition()
 {
     return sprite.getPosition();
 }
+
+void Player::setIsGrounded(bool _grounded)
+{
+    is_grounded = _grounded;
+};
+
+PolarCoordinates Player::getCoordinates()
+{
+    return coordinates;
+};

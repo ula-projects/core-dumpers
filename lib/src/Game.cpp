@@ -1,11 +1,13 @@
 #include "Game.hpp"
 
-Game::Game() : world(gravity), player(world), planet(world), background(Settings::textures["background"])
+Game::Game() : world(b2Vec2(0.f, 0.f)), background(Settings::textures["background"])
 {
     game_state = GameState::MainMenu;
-    gravity = b2Vec2(0.f, 0.f);
-    world.SetGravity(gravity);
-    planet.generateFromImage();
+
+    world.SetContactListener(&contact_listener);
+    player.init(world);
+    planet.init(world);
+
     background.setTextureRect({{0, 0}, {1024, 1024}});
     background.setOrigin({512, 512});
 }
@@ -22,12 +24,14 @@ void Game::update(float delta_time, sf::RenderWindow &window)
         menu.mainMenuUpdate(window, game_state);
         break;
     case GameState::Loading:
+        camera.setCenter(player.getPosition());
         game_state = GameState::Playing;
+
         break;
     case GameState::Playing:
         world.Step(1.f / 60.f, 8, 3);
-        camera.update(player.getPosition(), delta_time);
         player.update(delta_time);
+        camera.update(player.getPosition(), delta_time, player.getCoordinates());
         break;
     case GameState::Paused:
         break;
@@ -66,13 +70,3 @@ void Game::draw(sf::RenderWindow &window)
         break;
     }
 }
-
-// GameState Game::getGameState()
-// {
-//     return game_state;
-// }
-
-// void Game::setGameState(GameState _state)
-// {
-//     game_state = _state;
-// }

@@ -1,5 +1,6 @@
 #include <box2d/box2d.h>
 #include "Settings.hpp"
+#include "ContactListener.hpp"
 #include "Planet.hpp"
 #include "Menu.hpp"
 #include "Player.hpp"
@@ -8,14 +9,15 @@
 class Game
 {
 private:
+    // este es obvio xd jaja
     GameState game_state;
 
-    // Box2d World
-    b2Vec2 gravity;
-    b2World world;
-
-    // Menus
+    // Menus del juego
     Menu menu;
+
+    // Box2d World
+    b2World world;
+    ContactListener contact_listener;
 
     // Game Components
     Planet planet;
@@ -32,7 +34,4 @@ public:
     // Methods
     void update(float delta_time, sf::RenderWindow &window);
     void draw(sf::RenderWindow &window);
-
-    // GameState getGameState();
-    // void setGameState(GameState _state);
 };

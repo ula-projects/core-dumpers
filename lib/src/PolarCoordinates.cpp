@@ -12,7 +12,7 @@ void PolarCoordinates::updateCoordinates(sf::Vector2f position)
 
     radius = std::abs(std::sqrt((pos_x * pos_x) + (pos_y * pos_y)));
 
-    rad_angle = std::atan2(pos_y + Settings::WORLD_CENTER, pos_x - Settings::WORLD_CENTER);
+    rad_angle = std::atan2(pos_y, pos_x);
     deg_angle = rad_angle * 180 / M_PI;
 
     if (deg_angle < 0)

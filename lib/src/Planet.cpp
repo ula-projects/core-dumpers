@@ -1,15 +1,21 @@
 #include "Planet.hpp"
 
-Planet::Planet(b2World &world) : ground_sprite(Settings::textures["ground"])
+Planet::Planet() : ground_sprite(Settings::textures["ground"])
+{
+}
+
+Planet::~Planet()
+{
+}
+
+void Planet::init(b2World &world)
 {
     ground_sprite.setTextureRect({{0, 0}, {16, 16}});
     ground_body_def.type = b2_staticBody;
     ground_body_def.position.Set(0.f, 0.f); // Posición inicial (en píxeles)
     ground_body = world.CreateBody(&ground_body_def);
-}
-
-Planet::~Planet()
-{
+    generateFromImage();
+    ground_body->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
 }
 
 void Planet::draw(sf::RenderWindow &window, sf::Vector2f _position)
@@ -67,13 +73,14 @@ void Planet::generateFromImage()
                 shape.SetAsBox(tileHalfSize, tileHalfSize,
                                b2Vec2(worldX + tileHalfSize, worldY + tileHalfSize), 0.f);
 
-                b2FixtureDef fixtureDef;
-                fixtureDef.shape = &shape;
-                fixtureDef.density = 1.f;
-                fixtureDef.friction = 0.3f;
+                b2FixtureDef fixture_def;
+                fixture_def.shape = &shape;
+                fixture_def.density = 1.f;
+                fixture_def.friction = 1.f;
+                // fixture_def.restitution = 0.3f;
 
                 // ground->fixture =
-                ground_body->CreateFixture(&fixtureDef);
+                ground_body->CreateFixture(&fixture_def);
 
                 // grid[x][y] = ground;
                 // grid[x][y] = std::make_shared<Ground>(GroundType::Rock, x, y);
@@ -92,9 +99,9 @@ vector<shared_ptr<Ground>> Planet::getTilesByRange(sf::Vector2f _position, unsig
     unsigned int pos_y = _position.y / Settings::TILE_SIZE;
 
     long unsigned int x_begin = pos_x > _range ? pos_x - _range : 0;
-    long unsigned int x_end = pos_x < Settings::PLANET_RADIUS * 2 ? pos_x + _range : Settings::PLANET_RADIUS * 2;
+    long unsigned int x_end = pos_x < Settings::PLANET_SIZE - _range ? pos_x + _range : Settings::PLANET_SIZE;
     long unsigned int y_begin = pos_y > _range ? pos_y - _range : 0;
-    long unsigned int y_end = pos_y < Settings::PLANET_RADIUS * 2 ? pos_y + _range : Settings::PLANET_RADIUS * 2;
+    long unsigned int y_end = pos_y < Settings::PLANET_SIZE - _range ? pos_y + _range : Settings::PLANET_SIZE;
 
     vector<shared_ptr<Ground>> tile_list;
 

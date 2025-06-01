@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <box2d/box2d.h>
 
@@ -15,9 +16,10 @@ private:
     b2Body *ground_body;
 
 public:
-    Planet(b2World &world);
+    Planet();
     ~Planet();
 
+    void init(b2World &world);
     void draw(sf::RenderWindow &window, sf::Vector2f _position);
     void update(float delta_time);
     void generateFromImage();
