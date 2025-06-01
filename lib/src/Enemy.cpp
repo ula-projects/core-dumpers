@@ -472,14 +472,12 @@ NodeStatus FlyingEnemy::patrolArea()
 
         if (!touching_planet && !too_close_touching_planet)
         {
-            std::cout << "enemy lejos" << std::endl;
             b2Vec2 gravity_force(-Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
             enemy_b2_body->ApplyForceToCenter(gravity_force, true);
         }
 
         if (touching_planet && too_close_touching_planet)
         {
-            std::cout << "enemy muy cerva" << std::endl;
             b2Vec2 gravity_force(-Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), -Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
             enemy_b2_body->ApplyForceToCenter(gravity_force, true);
         }
