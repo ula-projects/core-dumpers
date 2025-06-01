@@ -89,30 +89,30 @@ void Player::update(float delta_time)
         float rotation_angle = -(coordinates.deg_angle - 90) * M_PI / 180;
         player_b2_body->SetTransform(player_b2_body->GetPosition(), rotation_angle);
 
+        // mov derecha
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
         {
             sprite.setScale({1, 1});
-            float angle = std::abs(coordinates.deg_angle - 90) * M_PI / 180;
-            float move_x = Settings::PLAYER_SPEED * cosf(angle);
-            float move_y = Settings::PLAYER_SPEED * sinf(angle);
+            float angle = coordinates.rad_angle - (90 * M_PI / 180);
+            float move_x = Settings::PLAYER_SPEED * std::cos(angle);
+            float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
             b2Vec2 movemet(move_x, move_y);
 
             player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
         }
 
+        // mov izquierda
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
         {
             sprite.setScale({-1, 1});
-            float angle = std::abs(coordinates.deg_angle + 90) * M_PI / 180;
-            float move_x = Settings::PLAYER_SPEED * cosf(angle);
-            float move_y = Settings::PLAYER_SPEED * sinf(angle);
+            float angle = coordinates.rad_angle + (90 * M_PI / 180);
+            float move_x = Settings::PLAYER_SPEED * std::cos(angle);
+            float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
             b2Vec2 movemet(move_x, move_y);
 
             player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
         }
     }
-
-    // mov derecha
 
     // gravity
     float gravity_x = -Settings::GRAVITY_FORCE * cosf(coordinates.rad_angle);

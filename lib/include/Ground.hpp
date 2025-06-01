@@ -1,3 +1,4 @@
+#pragma once
 #include <box2d/box2d.h>
 
 #include "Settings.hpp"
@@ -14,16 +15,21 @@ class Ground
 private:
     GroundType type;
     sf::Vector2f position;
+    b2Fixture *fixture;
+    b2Body *planet_body;
+    bool has_fixture;
 
 public:
-    b2Fixture *fixture;
-    Ground(GroundType _type, float _x, float _y);
+    Ground(b2Body *_planet_body, GroundType _type, float _x, float _y);
     ~Ground();
 
     sf::Vector2f getPosition();
 
+    void draw(sf::RenderWindow &windor, sf::Sprite sprite);
+
     bool hasFixture();
 
+    bool destroyTile(sf::Vector2f _position);
     void createFixture();
     void deleteFixture();
 };

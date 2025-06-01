@@ -94,38 +94,38 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
         }
     }
 
-    if (free_movement)
-    {
-        sf::Vector2f movement({0.0f, 0.0f});
+    // if (free_movement)
+    // {
+    //     sf::Vector2f movement({0.0f, 0.0f});
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-        {
-            sprite.setScale({-1, 1});
-            movement.x -= 1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-        {
-            sprite.setScale({1, 1});
-            movement.x += 1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-        {
-            movement.y -= 1.0f;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-        {
-            movement.y += 1.0f;
-        }
+    //     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+    //     {
+    //         sprite.setScale({-1, 1});
+    //         movement.x -= 1.0f;
+    //     }
+    //     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+    //     {
+    //         sprite.setScale({1, 1});
+    //         movement.x += 1.0f;
+    //     }
+    //     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+    //     {
+    //         movement.y -= 1.0f;
+    //     }
+    //     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+    //     {
+    //         movement.y += 1.0f;
+    //     }
 
-        if (movement.x != 0.0f || movement.y != 0.0f)
-        {
-            float magnitude = std::sqrt(std::pow(movement.x, 2) + std::pow(movement.y, 2));
-            movement /= magnitude;
-        }
+    //     if (movement.x != 0.0f || movement.y != 0.0f)
+    //     {
+    //         float magnitude = std::sqrt(std::pow(movement.x, 2) + std::pow(movement.y, 2));
+    //         movement /= magnitude;
+    //     }
 
-        sprite.move(movement * SPEED * delta_time);
-    }
-    else
+    //     sprite.move(movement * SPEED * delta_time);
+    // }
+    // else
     {
 
         // Update Polar Coordinates

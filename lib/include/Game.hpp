@@ -5,6 +5,7 @@
 #include "Menu.hpp"
 #include "Player.hpp"
 #include "Camera.hpp"
+#include "Picaxe.hpp"
 
 class Game
 {
@@ -23,6 +24,7 @@ private:
     Planet planet;
     Player player;
     Camera camera;
+    Picaxe picaxe;
 
     // Background Image
     sf::Sprite background;

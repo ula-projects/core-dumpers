@@ -31,6 +31,7 @@ void Game::update(float delta_time, sf::RenderWindow &window)
     case GameState::Playing:
         world.Step(1.f / 60.f, 8, 3);
         player.update(delta_time);
+        picaxe.update(window, planet.getTilesByRange(player.getPosition(), 1));
         camera.update(player.getPosition(), delta_time, player.getCoordinates());
         break;
     case GameState::Paused:

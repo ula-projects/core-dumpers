@@ -12,8 +12,8 @@ private:
 
     sf::Sprite ground_sprite;
 
-    b2BodyDef ground_body_def;
-    b2Body *ground_body;
+    b2BodyDef planet_body_def;
+    b2Body *planet_body;
 
 public:
     Planet();
