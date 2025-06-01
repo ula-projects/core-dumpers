@@ -2,8 +2,7 @@
 
 Camera::Camera()
 {
-    // camera.setSize({320, 180});
-    camera.setSize({1280, 720});
+    camera.setSize({320, 180});
     camera.setCenter({0, 0});
     is_centered = true;
 }
