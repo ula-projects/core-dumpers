@@ -17,6 +17,11 @@ private:
     float sprite_time;
     int current_sprite;
 
+    int health_points;
+    int max_health;
+    int attack_points;
+    float attack_range;
+
 public:
     Player();
     ~Player();
@@ -26,5 +31,7 @@ public:
     void init(b2World &world);
     sf::Vector2f getPosition();
     PolarCoordinates getCoordinates();
+    int getHealthPoints() const;
+    void takeDamage(int damage);
     void setIsGrounded(bool _grounded);
 };

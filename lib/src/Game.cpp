@@ -8,6 +8,10 @@ Game::Game() : world(b2Vec2(0.f, 0.f)), background(Settings::textures["backgroun
     player.init(world);
     planet.init(world);
 
+    //Creacion de Enemigos                                      Posicion
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({4100, -40})));
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({4200, -40})));
+
     background.setTextureRect({{0, 0}, {1024, 1024}});
     background.setOrigin({512, 512});
 }
@@ -33,6 +37,10 @@ void Game::update(float delta_time, sf::RenderWindow &window)
         player.update(delta_time);
         picaxe.update(window, planet.getTilesByRange(player.getPosition(), 1));
         camera.update(player.getPosition(), delta_time, player.getCoordinates());
+        for (auto& enemy : enemies)
+        {
+            enemy->update(delta_time);
+        }
         break;
     case GameState::Paused:
         break;
@@ -64,6 +72,10 @@ void Game::draw(sf::RenderWindow &window)
         window.draw(background);
         planet.draw(window, player.getPosition());
         player.draw(window);
+        for(auto& enemy : enemies)
+        {
+            enemy->draw(window);
+        }
         break;
     case GameState::Paused:
         break;

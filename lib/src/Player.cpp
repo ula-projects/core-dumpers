@@ -9,6 +9,11 @@ Player::Player() : sprite(Settings::textures["player"])
     free_movement = false;
     current_sprite = 0;
     sprite_time = 0;
+
+    health_points = 100;
+    max_health = 100;
+    attack_points = 20;
+    attack_range = 15;
 }
 
 Player::~Player()
@@ -130,6 +135,22 @@ void Player::update(float delta_time)
 sf::Vector2f Player::getPosition()
 {
     return sprite.getPosition();
+}
+
+int Player::getHealthPoints() const
+{
+    return health_points;
+}
+
+void Player::takeDamage(int damage)
+{
+    health_points -= damage;
+
+    if (health_points <= 0)
+    {
+        // manejar muerte
+        health_points = 0;
+    }
 }
 
 void Player::setIsGrounded(bool _grounded)
