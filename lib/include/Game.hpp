@@ -23,7 +23,7 @@ private:
 
     // Game Components
     Planet planet;
-    Player player;
+    std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<Enemy>> enemies;
     Camera camera;
     Picaxe picaxe;

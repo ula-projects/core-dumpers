@@ -90,7 +90,7 @@ bool Enemy::checkTargetStatus()
 
     if (target->getHealthPoints() <= 0)
     {
-        target.reset();
+        //target.reset();
         return false;
     }
     return true;
@@ -493,11 +493,7 @@ void InteractionManager(std::vector<std::shared_ptr<Enemy>> &enemies, std::share
     {
         if (enemy->getHealthPoints() > 0 && player->getHealthPoints() > 0)
         {
-            float distance = std::hypot(player->getPosition().x - enemy->getPosition().x, player->getPosition().y - enemy->getPosition().y);
-            if (distance < enemy->getVisionRange())
-            {
-                enemy->setTarget(player);
-            }
+            enemy->setTarget(player);
         }
     }
 }
