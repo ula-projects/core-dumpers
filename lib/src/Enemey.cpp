@@ -230,17 +230,27 @@ std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
 
 void Enemy::update(const float delta_time)
 {
+    coordinates.updateCoordinates(sprite.getPosition());
     behavior_tree_root->execute();
 
-    coordinates.updateCoordinates(sprite.getPosition());
-    sf::Angle rotation_angle = -sf::degrees(coordinates.deg_angle - 90);
-    sprite.setRotation(rotation_angle);
-    if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
-    {
-        sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
-    }
+    // sf::Angle rotation_angle = -sf::degrees(coordinates.deg_angle - 90);
+    // sprite.setRotation(rotation_angle);
+    // if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
+    // {
+    //     sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
+    // }
+    float rotation_angle = -(coordinates.deg_angle - 90) * M_PI / 180;
+    enemy_b2_body->SetTransform(enemy_b2_body->GetPosition(), rotation_angle);
+
+    // float gravity_x = -Settings::GRAVITY_FORCE * cosf(coordinates.rad_angle);
+    // float gravity_y = Settings::GRAVITY_FORCE * sinf(coordinates.rad_angle);
+
+    // b2Vec2 gravity(gravity_x, gravity_y);
+    // enemy_b2_body->ApplyForce(gravity, enemy_b2_body->GetWorldCenter(), true);
+
     b2Vec2 pos = enemy_b2_body->GetPosition();
     sprite.setPosition({pos.x, pos.y});
+
     sprite.setRotation(sf::Angle(sf::radians(enemy_b2_body->GetAngle())));
 }
 
@@ -400,25 +410,36 @@ NodeStatus FlyingEnemy::patrolArea()
 
         if (direction == 1) // right
         {
-            movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
-            movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
+            // movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
+            // movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
+            float angle = coordinates.rad_angle - (90 * M_PI / 180);
+            float move_x = Settings::PLAYER_SPEED * std::cos(angle);
+            float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
+            b2Vec2 movement_b2(move_x, move_y);
             if (debug_options)
             {
                 std::cout << "Enemy patrulla a la derecha" << std::endl;
             }
+            enemy_b2_body->ApplyForce(movement_b2, enemy_b2_body->GetWorldCenter(), true);
         }
 
         if (direction == -1) // left
         {
-            movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
-            movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
+            // movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
+            // movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
+            float angle = coordinates.rad_angle + (90 * M_PI / 180);
+            float move_x = Settings::PLAYER_SPEED * std::cos(angle);
+            float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
+            b2Vec2 movement(move_x, move_y);
             if (debug_options)
             {
                 std::cout << "Enemy patrulla a la izquierda" << std::endl;
             }
+            enemy_b2_body->ApplyForce(movement, enemy_b2_body->GetWorldCenter(), true);
         }
 
-        sprite.move(movement * Settings::ENEMY_SPEED);
+        // sprite.move(movement * Settings::ENEMY_SPEED);
+
         checkTargetStatus();
         return NodeStatus::RUNNING;
     }
