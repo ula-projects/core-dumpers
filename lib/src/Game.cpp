@@ -12,7 +12,7 @@ Game::Game() : world(b2Vec2(0.f, 0.f)), background(Settings::textures["backgroun
 
     for (auto &enemy : enemies)
     {
-        enemy->init(world, sf::Vector2f({4096, -40}));
+        enemy->init(world, sf::Vector2f({4096, -400}));
     }
 
     background.setTextureRect({{0, 0}, {1024, 1024}});
@@ -45,7 +45,7 @@ void Game::update(float delta_time, sf::RenderWindow &window)
 
         for (auto &enemy : enemies)
         {
-            enemy->update(delta_time);
+            enemy->update();
         }
         break;
     case GameState::Paused:

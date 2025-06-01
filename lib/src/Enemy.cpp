@@ -1,5 +1,18 @@
 #include "Enemy.hpp"
 
+class GroundRayCastCallback : public b2RayCastCallback
+{
+public:
+    b2Fixture *hitFixture = nullptr;
+
+    float ReportFixture(b2Fixture *fixture, const b2Vec2 &point,
+                        const b2Vec2 &normal, float fraction) override
+    {
+        hitFixture = fixture;
+        return fraction;
+    }
+};
+
 Enemy::Enemy() : sprite(Settings::textures["enemy"])
 {
     sprite.setTextureRect({{0, 0}, {static_cast<int>(Settings::TILE_SIZE), static_cast<int>(Settings::TILE_SIZE)}});
@@ -7,6 +20,7 @@ Enemy::Enemy() : sprite(Settings::textures["enemy"])
 
 void Enemy::init(b2World &world, sf::Vector2f init_position)
 {
+    world_ref = &world;
     b2BodyDef body_def;
     body_def.type = b2_dynamicBody;
     body_def.position.Set(init_position.x, init_position.y);
@@ -228,25 +242,13 @@ std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
     return main_behavior;
 }
 
-void Enemy::update(const float delta_time)
+void Enemy::update()
 {
     coordinates.updateCoordinates(sprite.getPosition());
     behavior_tree_root->execute();
 
-    // sf::Angle rotation_angle = -sf::degrees(coordinates.deg_angle - 90);
-    // sprite.setRotation(rotation_angle);
-    // if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
-    // {
-    //     sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
-    // }
     float rotation_angle = -(coordinates.deg_angle - 90) * M_PI / 180;
     enemy_b2_body->SetTransform(enemy_b2_body->GetPosition(), rotation_angle);
-
-    // float gravity_x = -Settings::GRAVITY_FORCE * cosf(coordinates.rad_angle);
-    // float gravity_y = Settings::GRAVITY_FORCE * sinf(coordinates.rad_angle);
-
-    // b2Vec2 gravity(gravity_x, gravity_y);
-    // enemy_b2_body->ApplyForce(gravity, enemy_b2_body->GetWorldCenter(), true);
 
     b2Vec2 pos = enemy_b2_body->GetPosition();
     sprite.setPosition({pos.x, pos.y});
@@ -399,8 +401,6 @@ NodeStatus FlyingEnemy::patrolArea()
             action_clock.restart();
         }
 
-        sf::Vector2f movement({0.0f, 0.0f});
-
         float patrol_cycle_time = 3.0f;
         if (action_clock.getElapsedTime().asSeconds() >= patrol_cycle_time)
         {
@@ -410,8 +410,6 @@ NodeStatus FlyingEnemy::patrolArea()
 
         if (direction == 1) // right
         {
-            // movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
-            // movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
             float angle = coordinates.rad_angle - (90 * M_PI / 180);
             float move_x = Settings::PLAYER_SPEED * std::cos(angle);
             float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
@@ -425,8 +423,6 @@ NodeStatus FlyingEnemy::patrolArea()
 
         if (direction == -1) // left
         {
-            // movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
-            // movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
             float angle = coordinates.rad_angle + (90 * M_PI / 180);
             float move_x = Settings::PLAYER_SPEED * std::cos(angle);
             float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
@@ -438,7 +434,53 @@ NodeStatus FlyingEnemy::patrolArea()
             enemy_b2_body->ApplyForce(movement, enemy_b2_body->GetWorldCenter(), true);
         }
 
-        // sprite.move(movement * Settings::ENEMY_SPEED);
+        /*  aaaa */
+        b2Vec2 position = enemy_b2_body->GetPosition();
+
+        // Dirección del raycast (hacia abajo)
+        float raycast_distance_max = 100.f;
+        float raycast_distance_min = 50.f;
+        b2Vec2 ray_end_max = position + b2Vec2(raycast_distance_max * std::cos(coordinates.rad_angle), raycast_distance_max * std::sin(coordinates.rad_angle)); // 1 metro abajo
+        b2Vec2 ray_end_min = position + b2Vec2(raycast_distance_min * std::cos(coordinates.rad_angle), raycast_distance_min * std::sin(coordinates.rad_angle)); // 1 metro abajo
+
+        // Realizar raycast
+        GroundRayCastCallback callback_max;
+        GroundRayCastCallback callback_min;
+        world_ref->RayCast(&callback_max, position, ray_end_max);
+        world_ref->RayCast(&callback_min, position, ray_end_min);
+
+        // Comprobar si tocamos el planeta
+        bool touching_planet = false;
+        bool too_close_touching_planet = false;
+        if (callback_max.hitFixture)
+        {
+            b2Body *hitBody = callback_max.hitFixture->GetBody();
+            if (hitBody)
+            {
+                touching_planet = true;
+            }
+        }
+
+        if (callback_min.hitFixture)
+        {
+            b2Body *hitBody = callback_min.hitFixture->GetBody();
+            if (hitBody)
+            {
+                too_close_touching_planet = true;
+            }
+        }
+
+        // Aplicar gravedad si no está tocando
+        if (!touching_planet && !too_close_touching_planet)
+        {
+            b2Vec2 gravity_force(Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle)); // Ajusta según tu mundo
+            enemy_b2_body->ApplyForceToCenter(gravity_force, true);
+        }
+
+        if (touching_planet && too_close_touching_planet)
+        {
+            b2Vec2 gravity_force(Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
+        }
 
         checkTargetStatus();
         return NodeStatus::RUNNING;

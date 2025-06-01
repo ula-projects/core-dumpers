@@ -98,9 +98,9 @@ void Player::update(float delta_time)
             float angle = coordinates.rad_angle - (90 * M_PI / 180);
             float move_x = Settings::PLAYER_SPEED * std::cos(angle);
             float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
-            b2Vec2 movemet(move_x, move_y);
+            b2Vec2 movement(move_x, move_y);
 
-            player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
+            player_b2_body->ApplyForce(movement, player_b2_body->GetWorldCenter(), true);
         }
 
         // mov izquierda
@@ -110,9 +110,9 @@ void Player::update(float delta_time)
             float angle = coordinates.rad_angle + (90 * M_PI / 180);
             float move_x = Settings::PLAYER_SPEED * std::cos(angle);
             float move_y = -Settings::PLAYER_SPEED * std::sin(angle);
-            b2Vec2 movemet(move_x, move_y);
+            b2Vec2 movement(move_x, move_y);
 
-            player_b2_body->ApplyForce(movemet, player_b2_body->GetWorldCenter(), true);
+            player_b2_body->ApplyForce(movement, player_b2_body->GetWorldCenter(), true);
         }
     }
 

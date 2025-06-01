@@ -1,9 +1,9 @@
 #include <stdexcept>
 #include "Settings.hpp"
 
-const fs::path Settings::ASSETS_PATH{"assets"};
+// const fs::path Settings::ASSETS_PATH{"assets"};
 
-const fs::path Settings::GRAPHICS_PATH{Settings::ASSETS_PATH / "textures"};
+// const fs::path Settings::GRAPHICS_PATH{Settings::ASSETS_PATH / "textures"};
 
 unordered_map<string, sf::Texture> Settings::textures{};
 unordered_map<string, sf::Font> Settings::fonts{};
@@ -18,7 +18,7 @@ void Settings::loadTextures()
 {
     sf::Texture player_texture{};
 
-    if (!player_texture.loadFromFile(Settings::GRAPHICS_PATH / "player.png"))
+    if (!player_texture.loadFromFile("./assets/textures/player.png"))
     {
         throw std::runtime_error{"Error loading player's texture"};
     }
@@ -27,7 +27,7 @@ void Settings::loadTextures()
 
     sf::Texture ground_texture{};
 
-    if (!ground_texture.loadFromFile(Settings::GRAPHICS_PATH / "ground.png"))
+    if (!ground_texture.loadFromFile("./assets/textures/ground.png"))
     {
         throw std::runtime_error{"Error loading ground texture"};
     }
@@ -36,7 +36,7 @@ void Settings::loadTextures()
 
     sf::Texture background_texture{};
 
-    if (!background_texture.loadFromFile(Settings::GRAPHICS_PATH / "background.png"))
+    if (!background_texture.loadFromFile("./assets/textures/background.png"))
     {
         throw std::runtime_error{"Error loading background texture"};
     }
@@ -45,7 +45,7 @@ void Settings::loadTextures()
 
     sf::Texture enemy_texture{};
 
-    if (!enemy_texture.loadFromFile(Settings::GRAPHICS_PATH / "enemy.png"))
+    if (!enemy_texture.loadFromFile("./assets/textures/enemy.png"))
     {
         throw std::runtime_error{"Error loading enemy texture"};
     }
