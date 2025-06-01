@@ -1,31 +1,35 @@
-#include <SFML/Graphics.hpp>
-#include <Coordinates.hpp>
-#include <QuadTreeNode.hpp>
-#include <OBB.hpp>
+#pragma once
+#include "Settings.hpp"
+#include <box2d/box2d.h>
+#include "PolarCoordinates.hpp"
 
 class Player
 {
 private:
     PolarCoordinates coordinates;
-    sf::Texture texture;
-    sf::Sprite sprite;
-    int health_points;
-    float SPEED = 50.0f;
 
-    OBB player_boundary;
-    bool jumping;
-    float jump_timer;
+    sf::Sprite sprite;
+
+    b2Body *player_b2_body;
+    bool is_grounded;
+    bool is_jumping;
+    bool free_movement;
     float sprite_time;
     int current_sprite;
-    bool grounded;
-    bool free_movement;
+
+    float health_points;
+    float max_health;
 
 public:
     Player();
     ~Player();
+
+    void update(float delta_time);
+    void draw(sf::RenderWindow &window);
+    void init(b2World &world);
     sf::Vector2f getPosition();
-    void draw(sf::RenderWindow &window) const;
-    void update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision_list, sf::RenderWindow &window);
-    int getHealthPoints() const;
-    void takeDamage(int damage);
+    PolarCoordinates getCoordinates();
+    void setIsGrounded(bool _grounded);
+    float getHealthPoints();
+    void takeDamage();
 };

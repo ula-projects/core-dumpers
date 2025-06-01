@@ -1,5 +1,3 @@
-#include "Settings.hpp"
-
 #pragma once
 
 #include <iostream>
@@ -22,7 +20,7 @@ public:
     virtual NodeStatus execute() = 0;
 };
 
-class ConditionNode : public BTNode
+class ConditionNode : public BTNode 
 {
 public:
     explicit ConditionNode(std::function<bool()> _condition);
@@ -45,23 +43,19 @@ private:
 class SelectorNode : public BTNode
 {
 public:
-    SelectorNode();
     void addChild(std::shared_ptr<BTNode> child);
     NodeStatus execute() override;
 
 private:
     std::vector<std::shared_ptr<BTNode>> children;
-    size_t current_child_index;
 };
 
 class SequenceNode : public BTNode
 {
 public:
-    SequenceNode();
     void addChild(std::shared_ptr<BTNode> child);
     NodeStatus execute() override;
 
 private:
     std::vector<std::shared_ptr<BTNode>> children;
-    size_t current_child_index;
 };

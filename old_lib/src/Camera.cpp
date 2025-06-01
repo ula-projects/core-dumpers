@@ -1,20 +1,26 @@
-#include "Camera.hpp"
+#include <Camera.hpp>
 
 Camera::Camera()
 {
-    // camera.setSize({320, 180});
-    camera.setSize({1280, 720});
-    camera.setCenter({0, 0});
+    camera.setSize({320, 180});
+    // camera.setSize({1920, 1080});
     is_centered = true;
+}
+
+Camera::Camera(sf::Vector2f center) : Camera()
+{
+    camera.setCenter(center);
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::update(sf::Vector2f center, float delta_time, PolarCoordinates coordinates)
+void Camera::setCenter(sf::Vector2f center, float delta_time)
 {
-    camera.setRotation(-sf::Angle(sf::degrees(coordinates.deg_angle - 90)));
+    // center es vector de posicion;
+    // sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
+    // sprite.setRotation(rotation_angle);
     sf::Vector2f camera_center = camera.getCenter();
     sf::Vector2f offset = center - camera_center;
 
@@ -64,7 +70,7 @@ void Camera::update(sf::Vector2f center, float delta_time, PolarCoordinates coor
         // Aumentamos la velocidad si se esta mas lejos del centro
         if (std::abs(offset.x) > safe_zone_half_x * 2 || std::abs(offset.y) > safe_zone_half_y * 2)
         {
-            camera.move(movement * 80.0f * delta_time);
+            camera.move(movement * 50.0f * delta_time);
         }
         else if (std::abs(offset.x) > safe_zone_half_x / 5 || std::abs(offset.y) > safe_zone_half_y / 5)
         {
@@ -75,16 +81,11 @@ void Camera::update(sf::Vector2f center, float delta_time, PolarCoordinates coor
             camera.move(movement * 5.0f * delta_time);
         }
     }
-};
+}
 
 const sf::View &Camera::getCamera() const
 {
     return camera;
-}
-
-void Camera::setCenter(sf::Vector2f center)
-{
-    camera.setCenter(center);
 }
 
 sf::Vector2f Camera::getCenter()

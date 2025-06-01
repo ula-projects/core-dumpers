@@ -1,5 +1,6 @@
-#include "Settings.hpp"
-#include "PolarCoordinates.hpp"
+#include <SFML/Graphics.hpp>
+#include <cmath>
+
 class Camera
 {
 private:
@@ -10,9 +11,7 @@ public:
     Camera();
     Camera(sf::Vector2f center);
     ~Camera();
-
-    void update(sf::Vector2f center, float delta_time, PolarCoordinates coordinates);
-    void setCenter(sf::Vector2f center);
+    void setCenter(sf::Vector2f center, float delta_time);
     sf::Vector2f getCenter();
     const sf::View &getCamera() const;
 };

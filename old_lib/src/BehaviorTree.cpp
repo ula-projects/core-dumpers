@@ -2,7 +2,7 @@
 
 // Definiciones de ConditionNode
 ConditionNode::ConditionNode(std::function<bool()> _condition) : condition(std::move(_condition)) {}
-
+    
 NodeStatus ConditionNode::execute()
 {
     return condition() ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
@@ -10,43 +10,37 @@ NodeStatus ConditionNode::execute()
 
 // Definiciones de ActionNode
 ActionNode::ActionNode(std::function<NodeStatus()> _action) : action(std::move(_action)) {}
-
+    
 NodeStatus ActionNode::execute()
 {
     return action();
 }
 
 // Definiciones de SelectorNode
-SelectorNode::SelectorNode() : current_child_index(0) {}
-
 void SelectorNode::addChild(std::shared_ptr<BTNode> child)
 {
     children.push_back(child);
 }
-
+    
 NodeStatus SelectorNode::execute()
 {
-    for (size_t i = current_child_index; i < children.size(); ++i)
+    for (auto& child : children)
     {
-        NodeStatus status = children[i]->execute();
+        NodeStatus status = child->execute();
         if (status == NodeStatus::RUNNING)
         {
-            current_child_index = i;
             return NodeStatus::RUNNING;
         }
         if (status == NodeStatus::SUCCESS)
         {
-            current_child_index = 0;
             return NodeStatus::SUCCESS;
         }
     }
-    current_child_index = 0;
     return NodeStatus::FAILURE;
 }
 
-// Definiciones de SequenceNode
-SequenceNode::SequenceNode() : current_child_index(0) {}
 
+// Definiciones de SequenceNode
 void SequenceNode::addChild(std::shared_ptr<BTNode> child)
 {
     children.push_back(child);
@@ -54,20 +48,17 @@ void SequenceNode::addChild(std::shared_ptr<BTNode> child)
 
 NodeStatus SequenceNode::execute()
 {
-    for (size_t i = current_child_index; i < children.size(); ++i)
+    for (auto& child : children)
     {
-        NodeStatus status = children[i]->execute();
+        NodeStatus status = child->execute();
         if (status == NodeStatus::RUNNING)
         {
-            current_child_index = i;
             return NodeStatus::RUNNING;
         }
         if (status == NodeStatus::FAILURE)
         {
-            current_child_index = 0;
             return NodeStatus::FAILURE;
         }
     }
-    current_child_index = 0;
     return NodeStatus::SUCCESS;
 }

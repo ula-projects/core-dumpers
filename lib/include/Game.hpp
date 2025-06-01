@@ -1,38 +1,41 @@
-#pragma once
-
-#include <SFML/Graphics.hpp>
-#include <Player.hpp>
-#include <QuadTree.hpp>
-#include <Planet.hpp>
-#include <Camera.hpp>
-#include <Menu.hpp>
+#include <box2d/box2d.h>
+#include "Settings.hpp"
+#include "ContactListener.hpp"
+#include "Planet.hpp"
+#include "Menu.hpp"
+#include "Player.hpp"
+#include "Camera.hpp"
+#include "Picaxe.hpp"
+#include "Enemy.hpp"
 
 class Game
 {
 private:
-    QuadTree qt;
-    Player player;
-    Camera camera;
-    XY world_center;
-    AABB world_boundary;
+    // este es obvio xd jaja
+    GameState game_state;
+
+    // Menus del juego
     Menu menu;
 
-    int game_state;
+    // Box2d World
+    b2World world;
+    ContactListener contact_listener;
 
-    sf::Texture ground_texture;
-    sf::Texture background_texture;
-    sf::Sprite ground;
+    // Game Components
+    Planet planet;
+    std::shared_ptr<Player> player;
+    std::vector<std::shared_ptr<Enemy>> enemies;
+    Camera camera;
+    Picaxe picaxe;
+
+    // Background Image
     sf::Sprite background;
-    shared_ptr<sf::Sprite> ground_ptr;
-
-    AABB view_boundary;
-    vector<shared_ptr<QuadTreeNode>> ground_list;
-
-    AABB collision_boundary;
-    vector<shared_ptr<QuadTreeNode>> collision_list;
 
 public:
     Game();
+    ~Game();
+
+    // Methods
+    void update(float delta_time, sf::RenderWindow &window);
     void draw(sf::RenderWindow &window);
-    void update(float &delta_time, sf::RenderWindow &window);
 };

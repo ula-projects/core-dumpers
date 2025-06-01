@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include <Game.hpp>
 #include <iostream>
+#include "Game.hpp"
+#include "Settings.hpp"
 
 int main()
 {
@@ -9,16 +10,12 @@ int main()
     window.setFramerateLimit(60);
 
     // Game
+    Settings::init();
     Game game;
 
     // Clock
     sf::Clock clock;
     float delta_time = 0.0f;
-
-    sf::CircleShape circle(42.5);
-    circle.setOrigin({42.5, 42.5});
-    circle.setFillColor(sf::Color::Red);
-    circle.setPosition({512, 512});
 
     while (window.isOpen())
     {
@@ -27,13 +24,19 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
         }
-        // Update
+
+        std::cout << "FPS: " << 1 / delta_time << "    \r" << std::flush;
+
         delta_time = clock.restart().asSeconds();
+
+        // Update
         game.update(delta_time, window);
 
-        // Update Graphics
         window.clear();
+
+        // Update Graphics
         game.draw(window);
+
         window.display();
     }
 }

@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/lib/include",
-                "/opt/homebrew/include"
+                "/opt/homebrew/include",
+                "/usr/local/include"
             ],
             "defines": [],
             "compilerPath": "/opt/homebrew/opt/llvm/bin/clang++",

@@ -1,66 +1,95 @@
-#include <Game.hpp>
+#include "Game.hpp"
 
-Game::Game() : camera(player.getPosition()), ground(ground_texture), background(background_texture)
+Game::Game() : world(b2Vec2(0.f, 0.f)), background(Settings::textures["background"])
 {
-    world_center.setCoordinates(512, 512);
-    world_boundary.setBoundary(world_center, 512, 512);
+    player = std::make_shared<Player>();
+    game_state = GameState::MainMenu;
 
-    qt.setBoundary(world_boundary);
-    qt.generateWorld();
+    world.SetContactListener(&contact_listener);
+    player->init(world);
+    planet.init(world);
 
-    if (!ground_texture.loadFromFile("./assets/textures/world_tileset.png"))
+    enemies.push_back(std::make_shared<FlyingEnemy>(sf::Vector2f({4096, -40})));
+
+    for (auto &enemy : enemies)
     {
+        enemy->init(world, sf::Vector2f({4096, -400}));
     }
-    ground.setTextureRect({{0, 16}, {16, 16}});
-    ground.setOrigin({8, 8});
-    ground_ptr = std::make_shared<sf::Sprite>(ground);
-    if (!background_texture.loadFromFile("./assets/textures/nebula-3.png"))
-    {
-    }
+
+    InteractionManager(enemies, player);
     background.setTextureRect({{0, 0}, {1024, 1024}});
+    background.setOrigin({512, 512});
+}
 
-    view_boundary.setBoundary(XY(camera.getCenter().x, camera.getCenter().y), 160, 90);
+Game::~Game()
+{
+}
 
-    collision_boundary.setBoundary(XY(player.getPosition().x, player.getPosition().y), 16, 16);
+void Game::update(float delta_time, sf::RenderWindow &window)
+{
+    switch (game_state)
+    {
+    case GameState::MainMenu:
+        menu.mainMenuUpdate(window, game_state);
+        break;
+    case GameState::Loading:
+        camera.setCenter(player->getPosition());
+        game_state = GameState::Playing;
 
-    game_state = 0;
+        break;
+    case GameState::Playing:
+        world.Step(1.f / 60.f, 8, 3);
+        player->update(delta_time);
+        picaxe.update(window, planet.getTilesByRange(player->getPosition(), 1));
+        camera.update(player->getPosition(), delta_time, player->getCoordinates());
+
+        for (auto &enemy : enemies)
+        {
+            enemy->update();
+        }
+        if (player->getHealthPoints() <= 0)
+        {
+            game_state = GameState::GameOver;
+        }
+        break;
+    case GameState::Paused:
+        break;
+    default:
+        break;
+    }
 }
 
 void Game::draw(sf::RenderWindow &window)
 {
+    switch (game_state)
+    {
+    case GameState::MainMenu:
 
-    if (game_state == 0)
-    {
-        menu.mainMenuDraw(window);
-    }
-    else if (game_state == 1)
-    {
+        background.setPosition({Settings::SCREEN_WIDTH / 2, Settings::SCREEN_HEIGHT / 2});
+        background.setScale({1.25f, 1.25f});
         window.draw(background);
-        for (auto ground : ground_list)
-        {
-            ground->draw(window, ground_ptr);
-        }
+        menu.mainMenuDraw(window);
+        break;
+    case GameState::Loading:
+        background.setPosition({Settings::SCREEN_WIDTH / 2, Settings::SCREEN_HEIGHT / 2});
+        background.setScale({1.25f, 1.25f});
+        window.draw(background);
+        break;
+    case GameState::Playing:
         window.setView(camera.getCamera());
-        player.draw(window);
-    }
-}
-
-void Game::update(float &delta_time, sf::RenderWindow &window)
-{
-    view_boundary.setBoundary(XY(camera.getCenter().x, camera.getCenter().y), view_boundary.half_width, view_boundary.half_height);
-    collision_boundary.setBoundary(XY(player.getPosition().x, player.getPosition().y), collision_boundary.half_width, collision_boundary.half_height);
-
-    // Menu Principal
-    if (game_state == 0)
-    {
-        menu.mainMenuUpdate(window, game_state);
-    }
-    // Juego
-    else if (game_state == 1)
-    {
-        ground_list = qt.queryRange(view_boundary);
-        collision_list = qt.queryRange(collision_boundary);
-        player.update(delta_time, collision_list, window);
-        camera.setCenter(player.getPosition(), delta_time);
+        background.setPosition({512, 512});
+        background.setScale({1.f, 1.f});
+        window.draw(background);
+        planet.draw(window, player->getPosition());
+        player->draw(window);
+        for (auto &enemy : enemies)
+        {
+            enemy->draw(window);
+        }
+        break;
+    case GameState::Paused:
+        break;
+    default:
+        break;
     }
 }
