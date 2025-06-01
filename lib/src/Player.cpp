@@ -148,3 +148,8 @@ float Player::getHealthPoints()
 {
     return health_points;
 }
+
+void Player::takeDamage()
+{
+    health_points -= 5.f;
+};

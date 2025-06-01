@@ -47,6 +47,10 @@ void Game::update(float delta_time, sf::RenderWindow &window)
         {
             enemy->update();
         }
+        if (player->getHealthPoints() <= 0)
+        {
+            game_state = GameState::GameOver;
+        }
         break;
     case GameState::Paused:
         break;

@@ -31,4 +31,5 @@ public:
     PolarCoordinates getCoordinates();
     void setIsGrounded(bool _grounded);
     float getHealthPoints();
+    void takeDamage();
 };

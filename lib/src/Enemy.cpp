@@ -288,6 +288,7 @@ NodeStatus FlyingEnemy::attackPlayer()
         {
             std::cout << "Enemy ha atacado a Player" << std::endl;
         }
+        target->takeDamage();
         action_clock.restart();
 
         checkTargetStatus();
