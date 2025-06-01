@@ -42,6 +42,15 @@ void Settings::loadTextures()
     }
 
     Settings::textures["background"] = background_texture;
+
+    sf::Texture enemy_texture{};
+
+    if (!enemy_texture.loadFromFile(Settings::GRAPHICS_PATH / "enemy.png"))
+    {
+        throw std::runtime_error{"Error loading enemy texture"};
+    }
+
+    Settings::textures["enemy"] = enemy_texture;
 }
 
 void Settings::loadFonts()
