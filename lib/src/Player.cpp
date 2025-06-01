@@ -22,6 +22,7 @@ void Player::init(b2World &world)
     b2BodyDef body_def;
     body_def.type = b2_dynamicBody;
     body_def.position.Set(4096.f, -16.f);
+    // body_def.position.Set(-10.f, 4096.f);
     // body_def.position.Set(8220.f, 4096.f);
     // body_def.position.Set(4096.f, 8220.f);
     player_b2_body = world.CreateBody(&body_def);

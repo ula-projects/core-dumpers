@@ -76,10 +76,26 @@ void Planet::generateFromImage()
     }
 };
 
-vector<shared_ptr<Ground>> Planet::getTilesByRange(sf::Vector2f _position, unsigned int _range)
+vector<shared_ptr<Ground>> Planet::getTilesByRange(sf::Vector2f _position, int _range)
 {
-    unsigned int pos_x = _position.x / Settings::TILE_SIZE;
-    unsigned int pos_y = _position.y / Settings::TILE_SIZE;
+    int pos_x = _position.x / Settings::TILE_SIZE;
+    int pos_y = _position.y / Settings::TILE_SIZE;
+    if (pos_x < 0)
+    {
+        pos_x = 0;
+    }
+    if (pos_x > 511)
+    {
+        pos_x = 511;
+    }
+    if (pos_y < 0)
+    {
+        pos_y = 0;
+    }
+    if (pos_y > 511)
+    {
+        pos_y = 511;
+    }
 
     long unsigned int x_begin = pos_x > _range ? pos_x - _range : 0;
     long unsigned int x_end = pos_x < Settings::PLANET_SIZE - _range ? pos_x + _range : Settings::PLANET_SIZE;

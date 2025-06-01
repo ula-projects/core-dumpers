@@ -24,5 +24,5 @@ public:
     void update(float delta_time);
     void generateFromImage();
 
-    vector<shared_ptr<Ground>> getTilesByRange(sf::Vector2f _position, unsigned int _range);
+    vector<shared_ptr<Ground>> getTilesByRange(sf::Vector2f _position, int _range);
 };
