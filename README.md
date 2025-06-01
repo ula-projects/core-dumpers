@@ -19,6 +19,7 @@ Antes de compilar el proyecto, asegúrate de tener instaladas las siguientes dep
 
 - **GCC** o **Clang** (compilador de C++)
 - **SFML 3.0** (biblioteca multimedia)
+- **BOX2D V2.4.2** (biblioteca de fisicas)
 - **Make** (para ejecutar el Makefile)
 - **Dependencias de SFML** (puedes instalarlas con el gestor de paquetes de tu sistema)
 - **Dependencias estándar de C++** (como `libstdc++` en Linux)
@@ -30,6 +31,23 @@ Antes de compilar el proyecto, asegúrate de tener instaladas las siguientes dep
 ```bash
 sudo apt update
 sudo apt install build-essential make
+```
+
+install box2d v2.4.2
+
+```bash
+git clone --brach v2.4.2 https://github.com/erincatto/box2d.git
+cd box2d/
+mkdir build
+cd build
+cmake -DBOX2D_BUILD_DOCS=ON ..
+cmake --build .
+sudo make install
+```
+Para instalar Box2d puedes necesitar DOXYGEN
+```bash
+sudo apt install doxygen
+sudo apt install libxinerama-dev libxcursor-dev libxrandr-dev libxi-dev
 ```
 
 #### **Linux (Arch)**
