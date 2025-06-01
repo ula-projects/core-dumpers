@@ -90,7 +90,7 @@ bool Enemy::checkTargetStatus()
 
     if (target->getHealthPoints() <= 0)
     {
-        //target.reset();
+        // target.reset();
         return false;
     }
     return true;
@@ -327,12 +327,18 @@ NodeStatus FlyingEnemy::approachPlayer()
 
     if (magnitude > attack_range - 10.0f)
     {
-        direction /= magnitude;
-        sprite.move(direction * Settings::ENEMY_SPEED);
         if (debug_options)
         {
             std::cout << "Enemy se esta acercando a Player" << std::endl;
         }
+
+        float rad_angle = coordinates.getRadAngleByPos(sprite.getPosition(), target->getPosition());
+        b2Vec2 movement(0.f, 0.f);
+        movement.x = -Settings::ENEMY_SPEED * std::cos(rad_angle);
+        movement.y = Settings::ENEMY_SPEED * std::sin(rad_angle);
+
+        enemy_b2_body->SetLinearVelocity(movement);
+
         return NodeStatus::RUNNING;
     }
 

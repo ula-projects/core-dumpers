@@ -11,5 +11,6 @@ struct PolarCoordinates
 
     PolarCoordinates();
 
-    void updateCoordinates(sf::Vector2f postion);
+    void updateCoordinates(sf::Vector2f position);
+    float getRadAngleByPos(sf::Vector2f position, sf::Vector2f center);
 };

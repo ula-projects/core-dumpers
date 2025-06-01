@@ -21,3 +21,11 @@ void PolarCoordinates::updateCoordinates(sf::Vector2f position)
     }
     rad_angle = deg_angle * M_PI / 180;
 };
+
+float PolarCoordinates::getRadAngleByPos(sf::Vector2f position, sf::Vector2f center)
+{
+    float pos_x = position.x - center.x;
+    float pos_y = -position.y + center.y;
+
+    return std::atan2(pos_y, pos_x);
+}
