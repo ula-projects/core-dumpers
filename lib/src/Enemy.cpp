@@ -470,16 +470,18 @@ NodeStatus FlyingEnemy::patrolArea()
             }
         }
 
-        // Aplicar gravedad si no está tocando
         if (!touching_planet && !too_close_touching_planet)
         {
-            b2Vec2 gravity_force(Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle)); // Ajusta según tu mundo
+            std::cout << "enemy lejos" << std::endl;
+            b2Vec2 gravity_force(-Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
             enemy_b2_body->ApplyForceToCenter(gravity_force, true);
         }
 
         if (touching_planet && too_close_touching_planet)
         {
-            b2Vec2 gravity_force(Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
+            std::cout << "enemy muy cerva" << std::endl;
+            b2Vec2 gravity_force(-Settings::GRAVITY_FORCE * std::cos(coordinates.rad_angle), -Settings::GRAVITY_FORCE * std::sin(coordinates.rad_angle));
+            enemy_b2_body->ApplyForceToCenter(gravity_force, true);
         }
 
         checkTargetStatus();

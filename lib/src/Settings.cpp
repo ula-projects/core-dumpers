@@ -10,8 +10,14 @@ unordered_map<string, sf::Font> Settings::fonts{};
 
 void Settings::init()
 {
-    loadTextures();
-    loadFonts();
+    try
+    {
+        loadTextures();
+        loadFonts();
+    }
+    catch (const std::exception &e)
+    {
+    }
 }
 
 void Settings::loadTextures()
