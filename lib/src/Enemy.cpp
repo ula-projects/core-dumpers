@@ -64,13 +64,13 @@ void Enemy::draw(sf::RenderWindow &window)
         vision_area.setRadius(vision_range);
         vision_area.setFillColor(sf::Color::Transparent);
         vision_area.setOutlineColor(sf::Color::Yellow);
-        vision_area.setOutlineThickness(1.5f);
+        vision_area.setOutlineThickness(1.0f);
         vision_area.setOrigin({vision_range, vision_range});
         vision_area.setPosition(getPosition());
         attack_area.setRadius(attack_range);
         attack_area.setFillColor(sf::Color::Transparent);
         attack_area.setOutlineColor(sf::Color::Magenta);
-        attack_area.setOutlineThickness(1.5f);
+        attack_area.setOutlineThickness(1.0f);
         attack_area.setOrigin({attack_range, attack_range});
         attack_area.setPosition(getPosition());
         window.draw(vision_area);
@@ -195,20 +195,7 @@ std::shared_ptr<BTNode> Enemy::createEnemyBehaviorTree()
 void Enemy::update(const float& _delta_time)
 {
     delta_time = _delta_time;
-
-    if (!debug_options)
-    {
-        behavior_tree->execute();
-    }
-    else
-    {
-        NodeStatus status = behavior_tree->execute();
-
-        if (status == NodeStatus::RUNNING)
-        {
-            std::cout << "Behavior Tree retorno el estado: RUNNING" << std::endl;
-        }
-    }
+    behavior_tree->execute();
 
     coordinates.updateCoordinates(sprite.getPosition());
     sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
@@ -226,7 +213,7 @@ FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : En
     attack_points = 10;
     drop = 25;
     attack_range = 30;
-    vision_range = 80;
+    vision_range = 120;
     speed = 35.0f;
     debug_options  = true;
     delta_time = 0.0f;
