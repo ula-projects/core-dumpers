@@ -6,6 +6,8 @@ void Enemy::takeDamage(int damage)
 {
     health_points -= damage;
 
+    sprite.setColor(sf::Color(255, 100, 100, sprite.getColor().a)); // Aplicar modificador de color
+    
     if (health_points <= 0)
     {
         // asignar drop al player
@@ -117,7 +119,7 @@ bool Enemy::isPlayerInAttackRange()
 
 bool Enemy::isHealthLow()
 {
-    if (health_points < max_health / 2)
+    if (health_points < max_health)
     {
         if (debug_options)
         {
@@ -207,6 +209,14 @@ void Enemy::update(const float& _delta_time)
             std::cout << "Behavior Tree retorno el estado: RUNNING" << std::endl;
         }
     }
+
+    coordinates.updateCoordinates(sprite.getPosition());
+    sf::Angle rotation_angle = -sf::degrees(coordinates.angle - 90);
+    sprite.setRotation(rotation_angle);
+    if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown / 3)
+    {
+        sprite.setColor(sf::Color(255, 255, 255, sprite.getColor().a)); // Restaurar color
+    }
 }
 
 FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : Enemy(texture)
@@ -215,14 +225,14 @@ FlyingEnemy::FlyingEnemy(sf::Vector2f position, const sf::Texture& texture) : En
     max_health = 100;
     attack_points = 10;
     drop = 25;
-    attack_range = 50;
-    vision_range = 200;
+    attack_range = 30;
+    vision_range = 80;
     speed = 35.0f;
-    debug_options  = false;
+    debug_options  = true;
     delta_time = 0.0f;
     attack_cooldown = 1.0f;
-    regen_cooldown = 1.0f;
-
+    regen_cooldown = 2.0f;
+    direction = 0;
     behavior_tree = createEnemyBehaviorTree();
 
     sprite.setOrigin({8, 8});
@@ -237,14 +247,14 @@ NodeStatus FlyingEnemy::attackPlayer()
     }
 
     // Atacar al objetivo
-    if (attack_clock.getElapsedTime().asSeconds() >= attack_cooldown)
+    if (action_clock.getElapsedTime().asSeconds() >= attack_cooldown)
     {
         target->takeDamage(attack_points);
         if (debug_options)
         {
             std::cout << "Enemy ha atacado a Player" << std::endl;
         }
-        attack_clock.restart();
+        action_clock.restart();
 
         checkTargetStatus();
         return NodeStatus::SUCCESS;
@@ -303,22 +313,28 @@ NodeStatus FlyingEnemy::rest()
     {
         if (debug_options)
         {
-            std::cout << "Rest interrumpido, Player ha en el area de vision" << std::endl;
+            std::cout << "Rest interrumpido, Player ha entrado en el area de vision" << std::endl;
         }
         return NodeStatus::FAILURE;
     }
 
-    if (health_clock.getElapsedTime().asSeconds() >= regen_cooldown)
+    if (action_clock.getElapsedTime().asSeconds() >= regen_cooldown)
     {
         if (health_points < max_health)
         {
-            health_points += 1;
-            
+            health_points += 3;
+            sprite.setColor(sf::Color(150, 255, 150, sprite.getColor().a)); // Aplicar modificador de color verde
+
+            if (health_points > max_health)
+            {
+                health_points = max_health;
+            }
+
             if (debug_options)
             {
                 std::cout << "Enemy ha regenerado vida, vida actual: " << getHealthPoints() << std::endl;
             }
-            health_clock.restart();
+            action_clock.restart();
             return NodeStatus::RUNNING;
         }
         return NodeStatus::SUCCESS;
@@ -328,20 +344,62 @@ NodeStatus FlyingEnemy::rest()
 
 NodeStatus FlyingEnemy::patrolArea()
 {
-    if (debug_options)
-    {
-        std::cout << "Enemy esta patrullando la zona" << std::endl;
-    }
     if (isPlayerNear())
     {
         if (debug_options)
         {
             std::cout << "Patrol completado, Player ha entrado en el area de vision" << std::endl;
         }
+        direction = 0;
+        
+        checkTargetStatus();
         return NodeStatus::SUCCESS;
     }
-    checkTargetStatus();
-    return NodeStatus::RUNNING;
+    else
+    {
+        if (debug_options)
+        {
+            std::cout << "Enemy esta patrullando la zona" << std::endl;
+        }
+        if (direction == 0)
+        {
+            direction = 1;
+            action_clock.restart();
+        }
+
+        sf::Vector2f movement({0.0f, 0.0f});
+        
+        float patrol_cycle_time = 3.0f;
+        if (action_clock.getElapsedTime().asSeconds() >= patrol_cycle_time)
+        {
+            direction *= -1;
+            action_clock.restart();
+        }
+
+        if (direction == 1) //right
+        {
+            movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
+            movement.y = -std::sin(coordinates.rad_angle - (90 * M_PI / 180));
+            if (debug_options)
+            {
+                std::cout << "Enemy patrulla a la derecha" << std::endl;
+            }
+        }
+
+        if (direction == -1) //left
+        {
+            movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
+            movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
+            if (debug_options)
+            {
+                std::cout << "Enemy patrulla a la izquierda" << std::endl;
+            }
+        }
+        
+        sprite.move(movement * speed * delta_time);
+        checkTargetStatus();
+        return NodeStatus::RUNNING;
+    }
 }
 
 void InteractionManager(std::vector<std::shared_ptr<Enemy>>& enemies, std::shared_ptr<Player> player)

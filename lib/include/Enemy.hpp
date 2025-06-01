@@ -4,11 +4,13 @@
 #include <memory>
 #include "BehaviorTree.hpp"
 #include "Player.hpp"
+#include "Coordinates.hpp"
 
 class Enemy
 {
 public:
     Enemy(const sf::Texture& texture);
+    sf::CircleShape hitbox;
     virtual ~Enemy() = default;
     int getHealthPoints() const;
     int getVisionRange() const;
@@ -28,12 +30,12 @@ protected:
     float vision_range;
     float speed;
     float delta_time;
-    sf::Clock attack_clock;
-    sf::Clock health_clock;
+    sf::Clock action_clock;
     float attack_cooldown;
     float regen_cooldown;
     std::shared_ptr<Player> target;
     sf::Sprite sprite;
+    PolarCoordinates coordinates;
     bool debug_options;
     std::shared_ptr<BTNode> behavior_tree;
 
@@ -57,6 +59,7 @@ public:
     FlyingEnemy(sf::Vector2f position, const sf::Texture& texture);
     ~FlyingEnemy() override = default;
 private:
+    int direction;
     NodeStatus attackPlayer() override;
     NodeStatus approachPlayer() override;
     NodeStatus rest() override;

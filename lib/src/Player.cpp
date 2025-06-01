@@ -108,7 +108,6 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
     }
     else
     {
-
         // Update Polar Coordinates
         // Vars - movement vectors
         sf::Vector2f movement({0.0f, 0.0f});
@@ -123,13 +122,13 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
             gravity_movement.x = (-0.5f) * std::cos(coordinates.rad_angle);
             gravity_movement.y = (0.5f) * std::sin(coordinates.rad_angle);
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
             {
                 sprite.setScale({-1, 1});
                 movement.x = std::cos(coordinates.rad_angle + (90 * M_PI / 180));
                 movement.y = -std::sin(coordinates.rad_angle + (90 * M_PI / 180));
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
             {
                 sprite.setScale({1, 1});
                 movement.x = std::cos(coordinates.rad_angle - (90 * M_PI / 180));
@@ -138,7 +137,7 @@ void Player::update(float delta_time, vector<shared_ptr<QuadTreeNode>> collision
         }
         else
         {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
             {
                 grounded = false;
                 jumping = true;
