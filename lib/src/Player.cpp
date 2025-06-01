@@ -9,6 +9,8 @@ Player::Player() : sprite(Settings::textures["player"])
     free_movement = false;
     current_sprite = 0;
     sprite_time = 0;
+    health_points = 100.f;
+    max_health = 100.f;
 }
 
 Player::~Player()
@@ -17,7 +19,6 @@ Player::~Player()
 
 void Player::init(b2World &world)
 {
-
     // Configura Body para el box2d
     b2BodyDef body_def;
     body_def.type = b2_dynamicBody;
@@ -142,3 +143,8 @@ PolarCoordinates Player::getCoordinates()
 {
     return coordinates;
 };
+
+float Player::getHealthPoints()
+{
+    return health_points;
+}

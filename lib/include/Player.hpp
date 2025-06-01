@@ -17,6 +17,9 @@ private:
     float sprite_time;
     int current_sprite;
 
+    float health_points;
+    float max_health;
+
 public:
     Player();
     ~Player();
@@ -27,4 +30,5 @@ public:
     sf::Vector2f getPosition();
     PolarCoordinates getCoordinates();
     void setIsGrounded(bool _grounded);
+    float getHealthPoints();
 };
